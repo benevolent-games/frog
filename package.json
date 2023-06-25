@@ -18,11 +18,11 @@
 		"test": "exit 0"
 	},
 	"peerDependencies": {
-		"@chasemoskal/magical": "^0.1.5",
-		"@chasemoskal/snapstate": "^0.0.9",
 		"lit": "^2.7.5"
 	},
 	"dependencies": {
+		"@chasemoskal/magical": "^0.1.5",
+		"@chasemoskal/snapstate": "^0.0.9",
 		"es-module-shims": "^1.7.3"
 	},
 	"devDependencies": {
