@@ -1,6 +1,7 @@
 
 export * from "./base/element.js"
 export * from "./base/helpers/pass_context_to_elements.js"
+export * from "./base/helpers/register_elements.js"
 export * from "./base/helpers/theme_elements.js"
 export * from "./base/helpers/update_elements_on_cue_changes.js"
 export * from "./base/helpers/update_elements_on_snap_changes.js"
