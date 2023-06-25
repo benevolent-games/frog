@@ -4,7 +4,7 @@
 		"rootDir": "s",
 		"outDir": "x",
 		"target": "es2019",
-		"lib": ["es2019"],
+		"lib": ["es2019", "dom"],
 		"module": "esnext",
 		"moduleResolution": "node",
 		"experimentalDecorators": true,
