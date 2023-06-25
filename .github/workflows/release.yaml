@@ -55,7 +55,7 @@ jobs:
 
     - name: 🗃️ copy files
       run: |
-        rm -rf x/node_modules x/s
+        rm -f x/node_modules x/s x/assets
         cp -r node_modules/ x/
         cp -r s/ x/
         cp -r assets/ x/
