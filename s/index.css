@@ -36,7 +36,6 @@ a {
 	padding: 1em;
 
 	> img {
-		aspect-ratio: 1 / 1;
 		width: 32em;
 		max-width: 100%;
 	}
