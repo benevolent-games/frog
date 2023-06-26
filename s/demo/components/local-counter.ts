@@ -1,25 +1,22 @@
 
 import {html} from "lit"
-import {QuickElement} from "../../quick/element.js"
 import {common_styles} from "../common-styles.js"
+import {QuickElement} from "../../quick/element.js"
 
-export const LocalCounter = () => class extends QuickElement<{count: number}> {
+export const LocalCounter = () => class extends QuickElement {
 
 	static styles = common_styles
 
-	init_state() {
-		return {count: 0}
-	}
+	count = this.cues.create(0)
 
 	#increment = () => {
-		const count = this.state.count += 1
-		this.state = {...this.state, count}
+		this.count.value += 1
 	}
 
 	render() {
 		return html`
 			<p class=tag>&lt;local-counter&gt;</p>
-			<p class=count>${this.state.count}</p>
+			<p class=count>${this.count.value}</p>
 			<button @click=${this.#increment}>increment</button>
 		`
 	}

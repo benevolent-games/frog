@@ -1,15 +1,16 @@
 
 import {debounce} from "@chasemoskal/magical"
-import {TemplateResult, adoptStyles, html, render} from "lit"
+import {TemplateResult, adoptStyles, render} from "lit"
 
 import {BaseElement} from "../base/element.js"
 import {explode_promise} from "../tools/explode_promise.js"
 import {finalize_styles} from "../base/utils/finalize_styles.js"
+import {cue_facility_for_element} from "../base/utils/cue_facility_for_element.js"
 
-export class QuickElement<S> extends HTMLElement implements BaseElement {
-	#state!: S
+export class QuickElement extends HTMLElement implements BaseElement {
 	#root: ShadowRoot
 	#update_promise?: Promise<void>
+	#cue_facility = cue_facility_for_element(this)
 	#update_promise_initial = explode_promise<void>()
 
 	constructor() {
@@ -17,24 +18,14 @@ export class QuickElement<S> extends HTMLElement implements BaseElement {
 		this.#root = this.attachShadow({mode: "open"})
 		const styles = finalize_styles((this.constructor as any).styles)
 		adoptStyles(this.#root, styles)
-		this.state = this.init_state()
 	}
 
-	init_state() {
-		return undefined as S
+	get cues() {
+		return this.#cue_facility.cues
 	}
 
 	get root() {
 		return this.#root
-	}
-
-	get state(): S {
-		return this.#state
-	}
-
-	set state(s: S) {
-		this.#state = s
-		this.update()
 	}
 
 	get wait() {
@@ -65,12 +56,15 @@ export class QuickElement<S> extends HTMLElement implements BaseElement {
 
 	connectedCallback() {
 		this.update()
+		this.#cue_facility.on_connected()
 	}
 
-	disconnectedCallback() {}
+	disconnectedCallback() {
+		this.#cue_facility.on_disconnected()
+	}
 
 	render(): TemplateResult | void {
-		return html``
+		return undefined
 	}
 }
 

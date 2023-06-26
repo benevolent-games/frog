@@ -25,7 +25,7 @@ export class Cue<V> {
 		return this.#listeners.clear()
 	}
 
-	publish = debounce(0, () => {
+	#invoke_listeners = debounce(0, () => {
 		const value = this.#value
 		this.#lock = true
 
@@ -35,6 +35,11 @@ export class Cue<V> {
 		this.#lock = false
 		return value
 	})
+
+	async publish() {
+		this.#wait = this.#invoke_listeners()
+		await this.#wait
+	}
 
 	get wait() {
 		return this.#wait
@@ -51,7 +56,7 @@ export class Cue<V> {
 				"you can't set a cue in a cue's subscription listener (infinite loop forbidden)"
 			)
 		this.#value = s
-		this.#wait = this.publish()
+		this.publish()
 	}
 }
 

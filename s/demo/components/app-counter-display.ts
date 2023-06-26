@@ -4,7 +4,7 @@ import {Context} from "../context.js"
 import {common_styles} from "../common-styles.js"
 import {QuickElement} from "../../quick/element.js"
 
-export const AppCounterDisplay = (context: Context) => class extends QuickElement<void> {
+export const AppCounterDisplay = (context: Context) => class extends QuickElement {
 
 	static styles = common_styles
 
