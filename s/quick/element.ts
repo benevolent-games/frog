@@ -3,6 +3,7 @@ import {debounce} from "@chasemoskal/magical"
 import {TemplateResult, adoptStyles, render} from "lit"
 
 import {BaseElement} from "../base/element.js"
+import {attributes} from "../base/utils/attributes.js"
 import {explode_promise} from "../tools/explode_promise.js"
 import {finalize_styles} from "../base/utils/finalize_styles.js"
 import {cue_facility_for_element} from "../base/utils/cue_facility_for_element.js"
@@ -19,6 +20,8 @@ export class QuickElement extends HTMLElement implements BaseElement {
 		const styles = finalize_styles((this.constructor as any).styles)
 		adoptStyles(this.#root, styles)
 	}
+
+	readonly attr = attributes(this)
 
 	get cues() {
 		return this.#cue_facility.cues
