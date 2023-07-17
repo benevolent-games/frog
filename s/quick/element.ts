@@ -35,6 +35,10 @@ export class QuickElement extends HTMLElement implements BaseElement {
 		return this.#update_promise ?? this.#update_promise_initial.promise
 	}
 
+	get updateComplete() {
+		return this.wait
+	}
+
 	#render = () => {
 		const root = this.#root
 		const template = this.render()
