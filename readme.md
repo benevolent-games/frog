@@ -10,19 +10,21 @@
 
 <br/>
 
-## flatstate
+## 🥞 flatstate
 
-- create a flatstate context
+flatstate helps you create state objects and reaction functions which are called when properties change.
+
+flatstate is inspired by mobx and snapstate, but designed to be really simple: flatstate only works on *flat* state objects, only the direct properties of state objects are tracked for reactivity.
+
+- create a flatstate tracking context
   ```ts
   import {Flatstate} from "@benev/frog"
 
   const flat = new Flatstate()
   ```
-- make a state object
+- make a flat state object
   ```ts
-  const state = flat.state({
-    count: 0,
-  })
+  const state = flat.state({count: 0})
   ```
 - setup a reaction
   ```ts
@@ -32,7 +34,10 @@
   state.count++
     //-> count 1
   ```
-- mix flatstate updates into your elements
+  - flatstate records which state properties your reaction reads
+  - flatstate calls your reaction whenever those specific properties change
+  - your reaction can listen to more than one state object
+- let your components rerender on flat state changes
   ```ts
   import {mix_flatstate_reactivity_into_elements} from "@benev/frog"
 
