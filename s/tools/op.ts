@@ -20,7 +20,7 @@ export namespace Op {
 		ready: (op: Any<any>) => op.mode === "ready",
 	})
 
-	export function get<X>(op: Any<X>) {
+	export function payload<X>(op: Any<X>) {
 		return (op.mode === "ready")
 			? op.payload
 			: undefined
