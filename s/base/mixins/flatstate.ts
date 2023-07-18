@@ -1,8 +1,8 @@
 
-import {Flat} from "../../flatstate/flat.js"
 import {BaseElementClass} from "../element.js"
+import {Flatstate} from "../../flatstate/flatstate.js"
 
-export function mixinFlatstate(...flats: Flat[]) {
+export function mixinFlatstate(...flats: Flatstate[]) {
 	return function<C extends BaseElementClass>(Base: C): C {
 		return class extends Base {
 			#untracks: (() => void)[] = []

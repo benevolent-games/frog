@@ -3,7 +3,7 @@ import {setup_accessors} from "./parts/setup/accessors.js"
 import {ActiveTracking, Collector, Keymap, Responder, Trackers} from "./parts/types.js"
 import {save_active_tracking_to_trackers} from "./parts/save_active_tracking_to_trackers.js"
 
-export class Flat {
+export class Flatstate {
 	#trackers: Trackers = new WeakMap<{}, Keymap>()
 	#active_tracking: undefined | ActiveTracking
 
