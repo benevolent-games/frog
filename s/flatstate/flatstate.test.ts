@@ -91,5 +91,42 @@ export default <Suite>{
 		expect(calls).equals(2)
 	},
 
+	async "reactions are isolated"() {
+		const flatA = new Flatstate()
+		const stateA1 = flatA.state({count: 0})
+		const stateA2 = flatA.state({count: 0})
+
+		const flatB = new Flatstate()
+		const stateB1 = flatB.state({count: 0})
+		const stateB2 = flatB.state({count: 0})
+
+		const reactions = {
+			stateA1: 0,
+			stateA2: 0,
+			stateB1: 0,
+			stateB2: 0,
+		}
+
+		flatA.reaction(() => { void stateA1.count; reactions.stateA1++ })
+		flatA.reaction(() => { void stateA2.count; reactions.stateA2++ })
+
+		flatB.reaction(() => { void stateB1.count; reactions.stateB1++ })
+		flatB.reaction(() => { void stateB2.count; reactions.stateB2++ })
+
+		stateA1.count++
+		await Promise.all([flatA.wait, flatB.wait])
+		expect(reactions.stateA1).equals(2)
+		expect(reactions.stateA2).equals(1)
+		expect(reactions.stateB1).equals(1)
+		expect(reactions.stateB2).equals(1)
+
+		stateB1.count++
+		await Promise.all([flatA.wait, flatB.wait])
+		expect(reactions.stateA1).equals(2)
+		expect(reactions.stateA2).equals(1)
+		expect(reactions.stateB1).equals(2)
+		expect(reactions.stateB2).equals(1)
+	}
+
 }
 
