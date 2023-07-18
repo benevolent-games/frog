@@ -1,4 +1,6 @@
 
+export {debounce} from "@chasemoskal/magical"
+
 export * from "./base/element.js"
 export * from "./base/helpers/mix_flatstate_reactivity_into_elements.js"
 export * from "./base/helpers/pass_context_to_elements.js"

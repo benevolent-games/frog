@@ -40,7 +40,7 @@ export function setup_accessors(
 
 	return {
 		proxy_handlers,
-		get wait_for_debouncer() {
+		get wait_for_debouncer(): Promise<void> {
 			return promise
 		},
 	}

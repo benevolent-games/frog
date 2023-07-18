@@ -8,7 +8,9 @@ export function mixinFlatstate(...flats: Flatstate[]) {
 			#untracks: (() => void)[] = []
 
 			get flatwait() {
-				return Promise.all(flats.map(flat => flat.wait))
+				return Promise
+					.all(flats.map(flat => flat.wait))
+					.then(() => {})
 			}
 
 			connectedCallback() {
