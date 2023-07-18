@@ -20,6 +20,7 @@ export default template(async basics => {
 					<local-counter></local-counter>
 					<app-counter-display></app-counter-display>
 					<app-counter-button></app-counter-button>
+					<flat-counter></flat-counter>
 				</div>
 			</div>
 		`,
