@@ -5,12 +5,12 @@ import {Context} from "./context.js"
 import {Pipe} from "../tools/pipe.js"
 import {FlatCounter} from "./components/flat-counter.js"
 import {LocalCounter} from "./components/local-counter.js"
-import {apply_theme} from "../base/helpers/theme_elements.js"
+import {apply_theme} from "../base/helpers/apply_theme.js"
 import {AppCounterButton} from "./components/app-counter-button.js"
 import {AppCounterDisplay} from "./components/app-counter-display.js"
-import {provide_context} from "../base/helpers/pass_context_to_elements.js"
-import {cue_reactivity} from "../base/helpers/update_elements_on_cue_changes.js"
-import {flatstate_reactivity} from "../base/helpers/mix_flatstate_reactivity_into_elements.js"
+import {provide_context} from "../base/helpers/provide_context.js"
+import {cue_reactivity} from "../base/helpers/cue_reactivity.js"
+import {flatstate_reactivity} from "../base/helpers/flatstate_reactivity.js"
 
 export const elements = {
 	LocalCounter,
