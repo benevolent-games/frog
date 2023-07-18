@@ -23,6 +23,7 @@ export * from "./quick/element.js"
 
 export * from "./tools/explode_promise.js"
 export * from "./tools/maptool.js"
+export * from "./tools/op.js"
 export * from "./tools/pipe.js"
 export * from "./tools/pub.js"
 
