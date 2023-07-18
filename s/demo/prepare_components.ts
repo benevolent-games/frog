@@ -1,6 +1,7 @@
 
 import {css} from "lit"
 import {Context} from "./context.js"
+import {Pipe} from "../tools/pipe.js"
 import {LocalCounter} from "./components/local-counter.js"
 import {theme_elements} from "../base/helpers/theme_elements.js"
 import {AppCounterButton} from "./components/app-counter-button.js"
@@ -23,10 +24,10 @@ export const default_theme = css`
 `
 
 export function prepare_components(context: Context, theme = default_theme) {
-	return theme_elements(theme,
-		update_elements_on_cue_changes(context.cues,
-			pass_context_to_elements(context, elements)
-		)
-	)
+	return new Pipe(elements)
+		.to(elements => pass_context_to_elements(context, elements))
+		.to(elements => update_elements_on_cue_changes(context.cues, elements))
+		.to(elements => theme_elements(theme, elements))
+		.done()
 }
 
