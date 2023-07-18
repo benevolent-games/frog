@@ -7,7 +7,7 @@ import {Flatstate} from "../../flatstate/flatstate.js"
 
 type Elements = {[key: string]: BaseElementClass}
 
-export function mix_flatstate_reactivity_into_elements<E extends Elements>(
+export function flatstate_reactivity<E extends Elements>(
 		flat: Flatstate,
 		elements: E,
 	) {

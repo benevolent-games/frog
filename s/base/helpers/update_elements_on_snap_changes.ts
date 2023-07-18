@@ -7,7 +7,7 @@ import {BaseElementClass} from "../element.js"
 
 type Elements = {[key: string]: BaseElementClass}
 
-export function update_elements_on_snap_changes<E extends Elements>(
+export function snap_reactivity<E extends Elements>(
 		snaps: Snapstate<any>[],
 		elements: E,
 	) {

@@ -4,7 +4,7 @@ import {mixinCss} from "../mixins/css.js"
 import {obtool} from "@chasemoskal/magical"
 import {BaseElementClass} from "../element.js"
 
-export const theme_elements = <
+export const apply_theme = <
 		xElements extends {[key: string]: BaseElementClass}
 	>(
 		theme: CSSResultGroup,

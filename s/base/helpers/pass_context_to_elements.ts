@@ -4,7 +4,7 @@ import {BaseElementClass} from "../element.js"
 
 type ElementFuncs<C> = {[key: string]: (context: C) => BaseElementClass}
 
-export function pass_context_to_elements<C, E extends ElementFuncs<C>>(
+export function provide_context<C, E extends ElementFuncs<C>>(
 		context: C,
 		elements: E,
 	) {

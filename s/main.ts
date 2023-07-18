@@ -1,9 +1,9 @@
 
 import {Context} from "./demo/context.js"
 import {prepare_components} from "./demo/prepare_components.js"
-import {register_elements} from "./base/helpers/register_elements.js"
+import {register_to_dom} from "./base/helpers/register_elements.js"
 
-register_elements(
+register_to_dom(
 	prepare_components(new Context())
 )
 

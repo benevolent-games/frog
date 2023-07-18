@@ -5,12 +5,12 @@ import {Context} from "./context.js"
 import {Pipe} from "../tools/pipe.js"
 import {FlatCounter} from "./components/flat-counter.js"
 import {LocalCounter} from "./components/local-counter.js"
-import {theme_elements} from "../base/helpers/theme_elements.js"
+import {apply_theme} from "../base/helpers/theme_elements.js"
 import {AppCounterButton} from "./components/app-counter-button.js"
 import {AppCounterDisplay} from "./components/app-counter-display.js"
-import {pass_context_to_elements} from "../base/helpers/pass_context_to_elements.js"
-import {update_elements_on_cue_changes} from "../base/helpers/update_elements_on_cue_changes.js"
-import {mix_flatstate_reactivity_into_elements} from "../base/helpers/mix_flatstate_reactivity_into_elements.js"
+import {provide_context} from "../base/helpers/pass_context_to_elements.js"
+import {cue_reactivity} from "../base/helpers/update_elements_on_cue_changes.js"
+import {flatstate_reactivity} from "../base/helpers/mix_flatstate_reactivity_into_elements.js"
 
 export const elements = {
 	LocalCounter,
@@ -29,10 +29,10 @@ export const default_theme = css`
 
 export function prepare_components(context: Context, theme = default_theme) {
 	return new Pipe(elements)
-		.to(elements => pass_context_to_elements(context, elements))
-		.to(elements => update_elements_on_cue_changes(context.cues, elements))
-		.to(elements => mix_flatstate_reactivity_into_elements(context.flat, elements))
-		.to(elements => theme_elements(theme, elements))
+		.to(elements => provide_context(context, elements))
+		.to(elements => cue_reactivity(context.cues, elements))
+		.to(elements => flatstate_reactivity(context.flat, elements))
+		.to(elements => apply_theme(theme, elements))
 		.done()
 }
 
