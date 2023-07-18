@@ -18,7 +18,7 @@ export class Flat {
 
 	state<S extends {}>(init: S) {
 		const target: S = {...init}
-		return new Proxy(target, this.#accessors.proxy_handlers)
+		return new Proxy(target, this.#accessors.proxy_handlers) as S
 	}
 
 	reaction<S>(
