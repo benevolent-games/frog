@@ -60,7 +60,7 @@ export default <Suite>{
 		}).throws()
 	},
 
-	async "cleanup a reaction"() {
+	async "stop a reaction"() {
 		const flat = new Flat()
 		const state = flat.state({count: 0})
 		let calls = 0
