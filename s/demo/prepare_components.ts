@@ -6,10 +6,10 @@ import {Pipe} from "../tools/pipe.js"
 import {FlatCounter} from "./components/flat-counter.js"
 import {LocalCounter} from "./components/local-counter.js"
 import {apply_theme} from "../base/helpers/apply_theme.js"
+import {cue_reactivity} from "../base/helpers/cue_reactivity.js"
+import {provide_context} from "../base/helpers/provide_context.js"
 import {AppCounterButton} from "./components/app-counter-button.js"
 import {AppCounterDisplay} from "./components/app-counter-display.js"
-import {provide_context} from "../base/helpers/provide_context.js"
-import {cue_reactivity} from "../base/helpers/cue_reactivity.js"
 import {flatstate_reactivity} from "../base/helpers/flatstate_reactivity.js"
 
 export const elements = {
@@ -28,11 +28,11 @@ export const default_theme = css`
 `
 
 export function prepare_components(context: Context, theme = default_theme) {
-	return new Pipe(elements)
-		.to(elements => provide_context(context, elements))
-		.to(elements => cue_reactivity(context.cues, elements))
-		.to(elements => flatstate_reactivity(context.flat, elements))
-		.to(elements => apply_theme(theme, elements))
+	return Pipe.with(elements)
+		.to(provide_context(context))
+		.to(cue_reactivity(context.cues))
+		.to(flatstate_reactivity(context.flat))
+		.to(apply_theme(theme))
 		.done()
 }
 
