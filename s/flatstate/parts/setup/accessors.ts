@@ -1,13 +1,19 @@
 
+import {debounce} from "@chasemoskal/magical"
+
 import {ActiveTracking, Trackers} from "../types.js"
 import {trigger_reactions} from "./units/trigger_reactions.js"
 import {record_in_active_tracking_that_key_was_accessed} from "./units/record_in_active_tracking_that_key_was_accessed.js"
 
-export function setup_proxy_handlers(
+export function setup_accessors(
 		trackers: Trackers,
 		get_active_tracking: () => (undefined | ActiveTracking),
-	): ProxyHandler<{[key: string]: any}> {
-	return {
+	) {
+
+	const debounced_trigger_reaction = debounce(0, trigger_reactions)
+	let promise: Promise<void>
+
+	const proxy_handlers: ProxyHandler<{[key: string]: any}> = {
 
 		get: (target, key: string) => {
 			const active_tracking = get_active_tracking()
@@ -21,7 +27,7 @@ export function setup_proxy_handlers(
 		},
 
 		set: (target, key: string, value) => {
-			trigger_reactions(
+			promise = debounced_trigger_reaction(
 				get_active_tracking(),
 				trackers,
 				target,
@@ -29,6 +35,13 @@ export function setup_proxy_handlers(
 			)
 			target[key] = value
 			return true
+		},
+	}
+
+	return {
+		proxy_handlers,
+		get wait_for_debouncer() {
+			return promise
 		},
 	}
 }
