@@ -126,7 +126,29 @@ export default <Suite>{
 		expect(reactions.stateA2).equals(1)
 		expect(reactions.stateB1).equals(2)
 		expect(reactions.stateB2).equals(1)
-	}
+	},
 
+	async "readable works with reactions"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		const readable = Flatstate.readable(state)
+		let calls = 0
+		flat.reaction(() => {
+			void readable.count
+			calls++
+		})
+		expect(calls).equals(1)
+		state.count++
+		await flat.wait
+		expect(calls).equals(2)
+	},
+
+	async "readable throws errors on writes"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		const readable = Flatstate.readable(state)
+		expect(() => { state.count++ }).not.throws()
+		expect(() => { readable.count++ }).throws()
+	},
 }
 

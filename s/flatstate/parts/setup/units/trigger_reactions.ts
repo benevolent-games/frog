@@ -1,4 +1,5 @@
 
+import {CircularFlatstateError} from "../../errors.js"
 import {ActiveTracking, Keymap, Trackers} from "../../types.js"
 
 export function trigger_reactions(
@@ -9,7 +10,7 @@ export function trigger_reactions(
 	) {
 
 	if (active_tracking)
-		throw new Error("forbidden flatstate circularity; please don't set a flatstate value within a react/track responder")
+		throw new CircularFlatstateError(key)
 
 	const keymap: Keymap = trackers.get(target) ?? new Map()
 	const keytracks = keymap.get(key)
