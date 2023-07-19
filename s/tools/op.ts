@@ -8,11 +8,9 @@ export namespace Op {
 	export type Any<X> = Loading | Err | Ready<X>
 	export type Setter<X> = (op: Any<X>) => void
 
-	export const make = Object.freeze({
-		loading: (): Loading => ({mode: "loading"}),
-		err: (reason: string): Err => ({mode: "err", reason}),
-		ready: <X>(payload: X): Ready<X> => ({mode: "ready", payload}),
-	})
+	export const loading = (): Loading => ({mode: "loading"})
+	export const err = (reason: string): Err => ({mode: "err", reason})
+	export const ready = <X>(payload: X): Ready<X> => ({mode: "ready", payload})
 
 	export const is = Object.freeze({
 		loading: (op: Any<any>) => op.mode === "loading",
@@ -51,11 +49,11 @@ export namespace Op {
 	}
 
 	export async function run<X>(set_op: Setter<X>, fun: () => Promise<X>) {
-		set_op(make.loading())
+		set_op(loading())
 
 		try {
 			const payload = await fun()
-			set_op(make.ready(payload))
+			set_op(ready(payload))
 		}
 		catch (error) {
 			const reason = (error instanceof Error)
@@ -63,7 +61,7 @@ export namespace Op {
 				: (typeof error === "string")
 					? error
 					: "error"
-			set_op(make.err(reason))
+			set_op(err(reason))
 		}
 	}
 }
