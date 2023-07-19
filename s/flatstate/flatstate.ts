@@ -1,11 +1,11 @@
 
-import {readable} from "./parts/readable.js"
+import {readonly} from "./parts/readonly.js"
 import {setup_accessors} from "./parts/setup/accessors.js"
 import {ActiveTracking, Collector, Keymap, Responder, Trackers} from "./parts/types.js"
 import {save_active_tracking_to_trackers} from "./parts/save_active_tracking_to_trackers.js"
 
 export class Flatstate {
-	static readable = readable
+	static readonly = readonly
 
 	#trackers: Trackers = new WeakMap<{}, Keymap>()
 

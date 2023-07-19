@@ -128,13 +128,13 @@ export default <Suite>{
 		expect(reactions.stateB2).equals(1)
 	},
 
-	async "readable works with reactions"() {
+	async "readonly works with reactions"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
-		const readable = Flatstate.readable(state)
+		const rstate = Flatstate.readonly(state)
 		let calls = 0
 		flat.reaction(() => {
-			void readable.count
+			void rstate.count
 			calls++
 		})
 		expect(calls).equals(1)
@@ -143,12 +143,12 @@ export default <Suite>{
 		expect(calls).equals(2)
 	},
 
-	async "readable throws errors on writes"() {
+	async "readonly throws errors on writes"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
-		const readable = Flatstate.readable(state)
+		const rstate = Flatstate.readonly(state)
 		expect(() => { state.count++ }).not.throws()
-		expect(() => { readable.count++ }).throws()
+		expect(() => { rstate.count++ }).throws()
 	},
 
 	async "clear all reactions"() {

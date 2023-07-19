@@ -1,7 +1,7 @@
 
 import {ForbiddenWriteFlatstateError} from "./errors.js"
 
-export function readable<S extends {}>(s: S) {
+export function readonly<S extends {}>(s: S) {
 	return new Proxy(s, {
 
 		get(target, key: string) {

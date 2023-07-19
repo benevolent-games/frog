@@ -11,7 +11,7 @@ export class CircularFlatstateError extends FlatstateError {
 
 export class ForbiddenWriteFlatstateError extends FlatstateError {
 	constructor(key: string) {
-		super(`forbidden write to readable state, rejected assignment to "${key}"`)
+		super(`forbidden write to readonly state, rejected assignment to "${key}"`)
 	}
 }
 

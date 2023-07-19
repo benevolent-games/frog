@@ -76,7 +76,7 @@ flatstate is inspired by mobx and snapstate, but designed to be really simple: f
 - create readonly access to a state object
   ```ts
   const state = flat.state({count: 0})
-  const rstate = Flatstate.readable(state)
+  const rstate = Flatstate.readonly(state)
 
   state.count = 1
   await flat.wait
