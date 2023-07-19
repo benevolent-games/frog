@@ -164,5 +164,35 @@ export default <Suite>{
 		await flat.wait
 		expect(calls).equals(2)
 	},
+
+	async "nested states"() {
+		const flat = new Flatstate()
+		const outer = flat.state({
+			count: 0,
+			inner: flat.state({count: 0})
+		})
+		let outer_calls = 0
+		let inner_calls = 0
+		flat.reaction(() => {
+			void outer.count
+			outer_calls++
+		})
+		flat.reaction(() => {
+			void outer.inner.count
+			inner_calls++
+		})
+		expect(outer_calls).equals(1)
+		expect(inner_calls).equals(1)
+
+		outer.count++
+		await flat.wait
+		expect(outer_calls).equals(2)
+		expect(inner_calls).equals(1)
+
+		outer.inner.count++
+		await flat.wait
+		expect(outer_calls).equals(2)
+		expect(inner_calls).equals(2)
+	},
 }
 
