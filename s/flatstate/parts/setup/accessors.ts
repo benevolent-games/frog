@@ -1,6 +1,5 @@
 
-import {debounce} from "@chasemoskal/magical"
-
+import {debounce} from "../../../tools/debounce.js"
 import {ActiveTracking, Trackers} from "../types.js"
 import {trigger_reactions} from "./units/trigger_reactions.js"
 import {record_in_active_tracking_that_key_was_accessed} from "./units/record_in_active_tracking_that_key_was_accessed.js"

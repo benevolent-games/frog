@@ -1,6 +1,7 @@
 
 import {Cue} from "./cue.js"
-import {debounce, obtool} from "@chasemoskal/magical"
+import {obtool} from "../tools/obtool.js"
+import {debounce} from "../tools/debounce.js"
 
 export class CueGroup {
 	#cues = new Set<Cue<any>>()

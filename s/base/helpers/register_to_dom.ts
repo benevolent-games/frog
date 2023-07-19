@@ -1,5 +1,3 @@
 
-import {registerElements} from "@chasemoskal/magical"
-
-export const register_to_dom = registerElements
+export {registerElements as register_to_dom} from "@chasemoskal/magical/x/register-elements.js"
 

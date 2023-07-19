@@ -1,8 +1,8 @@
 
-import {obtool} from "@chasemoskal/magical"
-import {Snapstate} from "@chasemoskal/snapstate"
+import type {Snapstate} from "@chasemoskal/snapstate"
 
 import {mixinSnap} from "../mixins/snap.js"
+import {obtool} from "../../tools/obtool.js"
 import {Elements} from "../utils/elements.js"
 
 export function snap_reactivity(snaps: Snapstate<any>[]) {

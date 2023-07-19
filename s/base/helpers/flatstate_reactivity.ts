@@ -1,6 +1,5 @@
 
-import {obtool} from "@chasemoskal/magical"
-
+import {obtool} from "../../tools/obtool.js"
 import {Elements} from "../utils/elements.js"
 import {mixinFlatstate} from "../mixins/flatstate.js"
 import {Flatstate} from "../../flatstate/flatstate.js"

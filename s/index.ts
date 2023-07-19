@@ -1,6 +1,4 @@
 
-export {debounce} from "@chasemoskal/magical"
-
 export * from "./base/element.js"
 export * from "./base/helpers/flatstate_reactivity.js"
 export * from "./base/helpers/provide_context.js"
@@ -23,8 +21,11 @@ export * from "./flatstate/flatstate.js"
 
 export * from "./quick/element.js"
 
+export * from "./tools/debounce.js"
 export * from "./tools/explode_promise.js"
 export * from "./tools/maptool.js"
+export * from "./tools/nap.js"
+export * from "./tools/obtool.js"
 export * from "./tools/op.js"
 export * from "./tools/pipe.js"
 export * from "./tools/pub.js"

@@ -1,5 +1,5 @@
 
-import {debounce} from "@chasemoskal/magical"
+import {debounce} from "../tools/debounce.js"
 import {CueListener} from "./parts/listener.js"
 import {CueCircularError} from "./parts/circular_error.js"
 

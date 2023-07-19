@@ -1,5 +1,5 @@
 
-import {obtool} from "@chasemoskal/magical"
+import {obtool} from "../../tools/obtool.js"
 import {BaseElementClass} from "../element.js"
 
 type ElementFuncs<C> = {[key: string]: (context: C) => BaseElementClass}

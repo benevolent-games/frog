@@ -1,7 +1,7 @@
 
-import {debounce} from "@chasemoskal/magical"
 import {TemplateResult, adoptStyles, render} from "lit"
 
+import {debounce} from "../tools/debounce.js"
 import {BaseElement} from "../base/element.js"
 import {attributes} from "../base/utils/attributes.js"
 import {explode_promise} from "../tools/explode_promise.js"

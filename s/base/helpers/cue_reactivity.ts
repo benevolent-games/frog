@@ -1,8 +1,7 @@
 
-import {obtool} from "@chasemoskal/magical"
-
 import {mixinCues} from "../mixins/cues.js"
 import {CueGroup} from "../../cues/group.js"
+import {obtool} from "../../tools/obtool.js"
 import {Elements} from "../utils/elements.js"
 
 export function cue_reactivity(cues: CueGroup) {
