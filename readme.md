@@ -9,12 +9,13 @@
 ❤️ frog is free and open source  
 
 <br/>
+<br/>
 
-## 🥞 flatstate
+## 🥞 Flatstate
 
-- flatstate helps you create state objects and reaction functions which are called when properties change.
+flatstate helps you create state objects and reaction functions which are called when properties change.
 
-- flatstate is inspired by mobx and snapstate, but designed to be really simple: flatstate only works on *flat* state objects, only the direct properties of state objects are tracked for reactivity.
+flatstate is inspired by mobx and snapstate, but designed to be really simple: flatstate only works on *flat* state objects, only the direct properties of state objects are tracked for reactivity.
 
 ### flatstate basics
 
@@ -81,7 +82,7 @@
   await flat.wait
   console.log(rstate.count) //-> 1
 
-  rstate.count = 2 //!! ForbiddenWriteFlatstateError
+  rstate.count = 2 // !! ForbiddenWriteFlatstateError !!
   ```
 
 ### flatstate integration with frontend elements
@@ -91,4 +92,83 @@
   import {flatstate_reactivity} from "@benev/frog"
 
   const elements = flatstate_reactivity(flat)(elements)
+  ```
+
+<br/>
+<br/>
+
+## 🪈 Pipe
+
+- pipe data through a series of functions
+- maybe you've done silly nesting like this:
+  ```ts
+  // bad
+  register_to_dom(
+    mixin_flatstate_reactivity(flat)(
+      apply_theme(theme)(
+        provide_context(context)(elements)
+      )
+    )
+  )
+  ```
+- now you can do this instead:
+  ```ts
+  import {Pipe} from "@benev/frog"
+
+  // good
+  Pipe.with(elements)
+    .to(provide_context(context))
+    .to(apply_theme(theme))
+    .to(flatstate_reactivity(flat))
+    .to(register_to_dom)
+  ```
+
+<br/>
+<br/>
+
+## 💫 Op
+
+utility for ui loading/err/ready states.
+
+useful for implementing async operations that involve loading indicators.
+
+- ops are just plain objects, and they have a `mode` string (loading/err/ready)
+  ```ts
+  import {Op} from "@benev/frog"
+
+  console.log(Op.make.loading())
+    //-> {mode: "loading"}
+
+  console.log(Op.make.err("a fail occurred"))
+    //-> {mode: "err", reason: "a fail occurred"}
+
+  console.log(Op.make.ready(123))
+    //-> {mode: "ready", payload: 123}
+  ```
+- you can run an async operation that will update your op accordingly
+  ```ts
+  let my_op = Op.make.loading()
+
+  await Op.run(op => my_op = op, async() => {
+    await nap(1000)
+    return 123
+  })
+  ```
+- functions to interrogate an op
+  ```ts
+    //        type for op in any mode
+    //                 v
+  function lol(op: Op.Any<number>) {
+
+    // branching based on the op's mode
+    Op.select(op, {
+      loading: () => console.log("op is loading"),
+      err: reason => console.log("op is err", reason),
+      ready: payload => console.log("op is ready", payload)
+    })
+
+    const payload = Op.payload(op)
+      // if the mode=ready, return the payload
+      // otherwise, return undefined
+  }
   ```
