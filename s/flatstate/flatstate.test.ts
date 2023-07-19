@@ -58,6 +58,17 @@ export default <Suite>{
 			)
 			await flat.wait
 		}).throws()
+		await expect(async() => {
+			flat.reaction(
+				() => ({count: state.count}),
+				() => state.count = 123,
+			)
+			await flat.wait
+		}).throws()
+		await expect(async() => {
+			flat.reaction(() => state.count = 123)
+			await flat.wait
+		}).throws()
 	},
 
 	async "stop a reaction"() {
