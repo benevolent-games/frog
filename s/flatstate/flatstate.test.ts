@@ -150,5 +150,19 @@ export default <Suite>{
 		expect(() => { state.count++ }).not.throws()
 		expect(() => { readable.count++ }).throws()
 	},
+
+	async "clear all reactions"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		let calls = 0
+		flat.reaction(() => { void state.count; calls++ })
+		state.count++
+		await flat.wait
+		expect(calls).equals(2)
+		flat.clear()
+		state.count++
+		await flat.wait
+		expect(calls).equals(2)
+	},
 }
 

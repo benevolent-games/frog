@@ -12,7 +12,7 @@ export class Flatstate {
 	#active_tracking: undefined | ActiveTracking
 
 	#accessors = setup_accessors(
-		this.#trackers,
+		() => this.#trackers,
 		() => this.#active_tracking,
 	)
 
@@ -42,6 +42,10 @@ export class Flatstate {
 
 		this.#active_tracking = undefined
 		return stop
+	}
+
+	clear() {
+		this.#trackers = new WeakMap()
 	}
 }
 

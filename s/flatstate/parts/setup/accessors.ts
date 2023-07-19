@@ -6,7 +6,7 @@ import {trigger_reactions} from "./units/trigger_reactions.js"
 import {record_in_active_tracking_that_key_was_accessed} from "./units/record_in_active_tracking_that_key_was_accessed.js"
 
 export function setup_accessors(
-		trackers: Trackers,
+		get_trackers: () => Trackers,
 		get_active_tracking: () => (undefined | ActiveTracking),
 	) {
 
@@ -29,7 +29,7 @@ export function setup_accessors(
 		set: (target, key: string, value) => {
 			promise = debounced_trigger_reaction(
 				get_active_tracking(),
-				trackers,
+				get_trackers(),
 				target,
 				key,
 			)
