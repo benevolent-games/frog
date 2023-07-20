@@ -5,9 +5,10 @@ import {CircularFlatstateError} from "./parts/errors.js"
 
 type Target = {}
 type Keyset = Set<string>
+type Collector = () => void
 type Responder = () => void
-type Responderset = Set<Responder>
-type Respondermap = Map<string, Responderset>
+type ReactionMap = Map<symbol, [Collector, Responder]>
+type ReactionsByKeys = Map<string, ReactionMap>
 
 const make_map = <K, V>() => new Map<K, V>()
 const make_set = <X>() => new Set<X>()
@@ -17,7 +18,7 @@ export class Flatstate {
 
 	#lock = false
 	#active_tracking: undefined | Map<Target, Keyset>
-	#tracking = new WeakMap<Target, Respondermap>()
+	#tracking = new WeakMap<Target, ReactionsByKeys>()
 
 	get wait() {
 		return Promise.resolve()
@@ -40,12 +41,14 @@ export class Flatstate {
 
 				target[key as keyof S] = value
 
-				const respondermap = this.#tracking.get(target)
-				const responderset = respondermap?.get(key) ?? []
+				const reactions_by_keys = maptool(this.#tracking).grab(target, make_map)
+				const reactions = maptool(reactions_by_keys).grab(key, make_map)
 				this.#lock = true
 
-				for (const responder of responderset)
+				for (const [symbol, [collector, responder]] of reactions.entries()) {
 					responder()
+					this.#record_state_property_access(symbol, collector, responder)
+				}
 
 				this.#lock = false
 				return true
@@ -53,19 +56,45 @@ export class Flatstate {
 		}) as S
 	}
 
-	reaction_core(collector: () => void, responder: () => void) {
+	#record_state_property_access(
+			symbol: symbol,
+			collector: () => void,
+			responder: () => void,
+		) {
+
 		this.#active_tracking = new Map()
 		collector()
 
 		const stoppers: (() => void)[] = []
 
 		for (const [target, keyset] of this.#active_tracking.entries()) {
-			const respondermap = maptool(this.#tracking).grab(target, make_map)
+			const reactions_by_keys = maptool(this.#tracking).grab(target, make_map)
 
 			for (const key of keyset) {
-				const responderset = maptool(respondermap).grab(key, make_set)
-				responderset.add(responder)
-				stoppers.push(() => responderset.delete(responder))
+				const reactions = maptool(reactions_by_keys).grab(key, make_map)
+				reactions.set(symbol, [collector, responder])
+				stoppers.push(() => reactions.delete(symbol))
+			}
+		}
+
+		this.#active_tracking = undefined
+		return () => stoppers.forEach(stop => stop())
+	}
+
+	reaction_core(collector: () => void, responder: () => void) {
+		const symbol = Symbol()
+		this.#active_tracking = new Map()
+		collector()
+
+		const stoppers: (() => void)[] = []
+
+		for (const [target, keyset] of this.#active_tracking.entries()) {
+			const reactions_by_keys = maptool(this.#tracking).grab(target, make_map)
+
+			for (const key of keyset) {
+				const reactions = maptool(reactions_by_keys).grab(key, make_map)
+				reactions.set(symbol, [collector, responder])
+				stoppers.push(() => reactions.delete(symbol))
 			}
 		}
 
