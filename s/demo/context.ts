@@ -7,6 +7,9 @@ export class Context {
 	count = this.cues.create(0)
 
 	flat = new Flatstate()
-	state = this.flat.state({flatcount: 0})
+	state = this.flat.state({
+		flatcount: 0,
+		nest: [] as {count: number}[],
+	})
 }
 
