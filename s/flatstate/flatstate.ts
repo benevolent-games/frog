@@ -47,6 +47,37 @@ export class Flatstate {
 		)
 	}
 
+	reaction2<D>(collector: () => D, responder?: (data: D) => void) {
+		const true_responder = responder
+			? () => responder(collector())
+			: collector
+
+		let stop: undefined | (() => void)
+
+		const next_collector = () => {
+			if (stop)
+				stop()
+
+			let data = undefined as D
+
+			stop = this.reaction_core(
+				() => {
+					data = collector()
+				},
+				true_responder,
+			)
+
+			return data
+		}
+
+		return this.reaction_core(
+			collector,
+			responder
+				? () => responder(next_collector())
+				: next_collector
+		)
+	}
+
 	clear() {
 		this.#trackers = new WeakMap()
 	}
