@@ -1,4 +1,6 @@
 
+import {TemplateResult} from "lit"
+
 import {BaseElementClass} from "../element.js"
 import {Flatstate} from "../../flatstate/flatstate.js"
 
@@ -18,8 +20,8 @@ export function mixinFlatstate(...flats: Flatstate[]) {
 
 				for (const flat of flats) {
 					this.#untracks.push(flat.reaction(
-						() => this.render(),
-						() => this.requestUpdate(),
+						() => { this.render() },
+						() => { this.requestUpdate() },
 					))
 				}
 			}
@@ -31,6 +33,42 @@ export function mixinFlatstate(...flats: Flatstate[]) {
 					untrack()
 
 				this.#untracks = []
+			}
+		}
+	}
+}
+
+export function mixinFlatstate2(flat: Flatstate) {
+	return function<C extends BaseElementClass>(Base: C): C {
+		return class extends Base {
+			#stop: void | (() => void) = undefined
+
+			constructor(...args: any[]) {
+				super(...args)
+				Object.defineProperty(this, "updateComplete", {
+					async get() {
+						await flat.wait
+						await super.updateComplete
+					},
+					set() {
+						throw new Error("updateComplete is readonly")
+					},
+				})
+			}
+
+			render() {
+				if (this.#stop) this.#stop()
+				let result: void | TemplateResult = undefined
+
+				this.#stop = flat.reaction(
+					{
+						lean: true,
+						collector: () => { result = super.render() }
+					},
+					() => { this.requestUpdate() },
+				)
+
+				return result
 			}
 		}
 	}

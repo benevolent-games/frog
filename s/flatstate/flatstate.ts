@@ -1,14 +1,13 @@
 
 import {readonly} from "./parts/readonly.js"
 import {setup_accessors} from "./parts/setup/accessors.js"
-import {ActiveTracking, Collector, Keymap, Responder, Trackers} from "./parts/types.js"
 import {save_active_tracking_to_trackers} from "./parts/save_active_tracking_to_trackers.js"
+import {ActiveTracking, Collector, Keymap, Responder, Trackers} from "./parts/types.js"
 
 export class Flatstate {
 	static readonly = readonly
 
 	#trackers: Trackers = new WeakMap<{}, Keymap>()
-
 	#active_tracking: undefined | ActiveTracking
 
 	#accessors = setup_accessors(
@@ -26,17 +25,31 @@ export class Flatstate {
 	}
 
 	reaction<S>(
-			collector: Collector<S>,
+			collector: Collector<S> | {
+				lean: true,
+				collector: Collector<S>
+			},
 			responder?: Responder<S>,
 		) {
 
+		let lean: boolean = false
+		let collector_function: Collector<S>
+		if (typeof collector === "function") {
+			collector_function = collector
+		}
+		else {
+			lean = collector.lean
+			collector_function = collector.collector
+		}
+
 		this.#active_tracking = new Map()
-		collector()
+		collector_function()
 
 		const stop = save_active_tracking_to_trackers(
 			this.#trackers,
 			this.#active_tracking,
-			collector,
+			collector_function,
+			lean,
 			responder,
 		)
 

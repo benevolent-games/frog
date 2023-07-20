@@ -6,7 +6,7 @@ export type BaseElement = HTMLElement & {
 	disconnectedCallback(): void
 	render(): TemplateResult | void
 	requestUpdate(): Promise<void>
-	updateComplete: Promise<void>
+	readonly updateComplete: Promise<void>
 }
 
 export type BaseElementClass = {
