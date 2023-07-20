@@ -24,37 +24,28 @@ export class Flatstate {
 		return new Proxy(target, this.#accessors.proxy_handlers) as S
 	}
 
-	reaction<S>(
-			collector: Collector<S> | {
-				lean: true,
-				collector: Collector<S>
-			},
-			responder?: Responder<S>,
-		) {
-
-		let lean: boolean = false
-		let collector_function: Collector<S>
-		if (typeof collector === "function") {
-			collector_function = collector
-		}
-		else {
-			lean = collector.lean
-			collector_function = collector.collector
-		}
-
+	reaction_core(collector: () => void, responder: () => void) {
 		this.#active_tracking = new Map()
-		collector_function()
+		collector()
 
 		const stop = save_active_tracking_to_trackers(
 			this.#trackers,
 			this.#active_tracking,
-			collector_function,
-			lean,
+			collector,
 			responder,
 		)
 
 		this.#active_tracking = undefined
 		return stop
+	}
+
+	reaction<D>(collector: () => D, responder?: (data: D) => void) {
+		return this.reaction_core(
+			collector,
+			responder
+				? () => responder(collector())
+				: collector
+		)
 	}
 
 	clear() {

@@ -1,7 +1,7 @@
 
 import {obtool} from "../../tools/obtool.js"
 import {Elements} from "../utils/elements.js"
-import {mixinFlatstate, mixinFlatstate2} from "../mixins/flatstate.js"
+import {mixinFlatstate2} from "../mixins/flatstate.js"
 import {Flatstate} from "../../flatstate/flatstate.js"
 
 export function flatstate_reactivity(flat: Flatstate) {

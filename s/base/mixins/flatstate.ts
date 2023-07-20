@@ -19,7 +19,7 @@ export function mixinFlatstate(...flats: Flatstate[]) {
 				super.connectedCallback()
 
 				for (const flat of flats) {
-					this.#untracks.push(flat.reaction(
+					this.#untracks.push(flat.reaction_core(
 						() => { this.render() },
 						() => { this.requestUpdate() },
 					))
@@ -60,11 +60,8 @@ export function mixinFlatstate2(flat: Flatstate) {
 				if (this.#stop) this.#stop()
 				let result: void | TemplateResult = undefined
 
-				this.#stop = flat.reaction(
-					{
-						lean: true,
-						collector: () => { result = super.render() }
-					},
+				this.#stop = flat.reaction_core(
+					() => { result = super.render() },
 					() => { this.requestUpdate() },
 				)
 

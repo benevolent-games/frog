@@ -16,19 +16,10 @@ export function trigger_reactions(
 	const keytracks = keymap.get(key)
 
 	if (keytracks) {
-		for (const [collector, {lean, responders}] of keytracks.entries()) {
+		for (const [,responders] of keytracks.entries()) {
 			if (responders.size > 0) {
-				if (lean) {
-					for (const responder of responders)
-						if (responder)
-							responder(undefined)
-				}
-				else {
-					const substate = collector()
-					for (const responder of responders)
-						if (responder)
-							responder(substate)
-				}
+				for (const responder of responders)
+					responder()
 			}
 		}
 	}

@@ -1,13 +1,9 @@
 
-export type Collector<S> = () => S
-export type Responder<S> = (substate: S) => void
+export type Fun = () => void
+export type Collector = Fun
+export type Responder = Fun
 
-export type CollectorMeta = {
-	lean: boolean
-	responders: Set<void | Responder<any>>
-}
-
-export type Keytracks = Map<Collector<any>, CollectorMeta>
+export type Keytracks = Map<Collector, Set<Responder>>
 export type Keymap = Map<string, Keytracks>
 export type Trackers = WeakMap<{}, Keymap>
 
