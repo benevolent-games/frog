@@ -16,15 +16,6 @@ export class Flatstate {
 		}
 	}
 
-	#recording: false | Recording = false
-	#record(fun: () => void) {
-		this.#recording = make_map()
-		fun()
-		const recording = this.#recording
-		this.#recording = false
-		return recording
-	}
-
 	#locked = false
 	#lock(fun: () => void) {
 		this.#locked = true
@@ -32,8 +23,13 @@ export class Flatstate {
 		this.#locked = false
 	}
 
-	get #is_locked_or_recording() {
-		return this.#locked || !!this.#recording
+	#recording?: Recording
+	#record(fun: () => void) {
+		this.#recording = make_map()
+		this.#lock(fun)
+		const recording = this.#recording
+		this.#recording = undefined
+		return recording
 	}
 
 	#proxy_handlers: ProxyHandler<any> = {
@@ -42,14 +38,13 @@ export class Flatstate {
 			return state[key]
 		},
 		set: (state, key: string, value: any) => {
-			if (this.#is_locked_or_recording)
+			if (this.#locked)
 				throw new CircularFlatstateError(key)
 
 			state[key] = value
 
 			const keymap = maptool(this.#tracking).grab(state, make_map)
 			const symbolmap = maptool(keymap).grab(key, make_map)
-
 			const todo: [symbol, Reaction][] = []
 
 			for (const entry of symbolmap.entries()) {
@@ -108,7 +103,7 @@ type KeyMap = Map<string, SymbolMap>
 type Tracking = WeakMap<{}, KeyMap>
 
 function record_key(
-		recording: false | Recording,
+		recording: Recording | undefined,
 		state: {},
 		key: string,
 	) {
