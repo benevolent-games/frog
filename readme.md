@@ -66,6 +66,15 @@ flatstate is inspired by mobx and snapstate, but designed to be really simple: f
   flat.clear()
   ```
 
+### flatstate reactions
+
+- so first, there's a simple one-function reaction:
+  ```ts
+  flat.reaction(() => console.log(state.count))
+  ```
+  - flatstate immediately runs the function, and records which properties it reads
+  - then, anytime one of those properties changes, it runs your function again
+
 ### flatstate advanced
 
 - multiple flatstate instances are totally isolated from each other
