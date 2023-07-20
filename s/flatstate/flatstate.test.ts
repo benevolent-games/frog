@@ -66,6 +66,29 @@ export default <Suite>{
 		expect(responder_greeting).equals("hello world")
 	},
 
+	async "reaction_core is efficient"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		let collections = 0
+		let responses = 0
+		flat.reaction_core(
+			() => {
+				void state.count
+				collections++
+			},
+			() => {
+				void state.count
+				responses++
+			}
+		)
+		expect(collections).equals(1)
+		expect(responses).equals(0)
+		state.count++
+		await flat.wait
+		expect(collections).equals(1)
+		expect(responses).equals(1)
+	},
+
 	async "circular loops are forbidden"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
