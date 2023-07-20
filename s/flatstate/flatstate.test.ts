@@ -45,6 +45,50 @@ export default <Suite>{
 		expect(responder_calls).equals(2)
 	},
 
+	async "reaction collector can pass data to responder"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0, greeting: "hello"})
+		let responder_count: number = -1
+		let responder_greeting: string = ""
+		flat.reaction(
+			() => ({count: state.count, greeting: state.greeting}),
+			({count, greeting}) => {
+				responder_count = count
+				responder_greeting = greeting
+			},
+		)
+		expect(responder_count).equals(-1)
+		expect(responder_greeting).equals("")
+		state.count++
+		state.greeting = "hello world"
+		await flat.wait
+		expect(responder_count).equals(1)
+		expect(responder_greeting).equals("hello world")
+	},
+
+	async "reaction_core is efficient"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		let collections = 0
+		let responses = 0
+		flat.reaction_core(
+			() => {
+				void state.count
+				collections++
+			},
+			() => {
+				void state.count
+				responses++
+			}
+		)
+		expect(collections).equals(1)
+		expect(responses).equals(0)
+		state.count++
+		await flat.wait
+		expect(collections).equals(1)
+		expect(responses).equals(1)
+	},
+
 	async "circular loops are forbidden"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})

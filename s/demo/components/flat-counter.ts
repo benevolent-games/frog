@@ -21,6 +21,7 @@ export const FlatCounter = (context: Context) => class extends QuickElement {
 	}
 
 	render() {
+		console.log("render")
 		return html`
 			<p class=tag>&lt;flat-counter&gt;</p>
 			<p class=count>${context.state.flatcount}</p>

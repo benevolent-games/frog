@@ -1,36 +1,48 @@
 
+import {TemplateResult} from "lit"
+
 import {BaseElementClass} from "../element.js"
 import {Flatstate} from "../../flatstate/flatstate.js"
 
-export function mixinFlatstate(...flats: Flatstate[]) {
+export function mixinFlatstate(flat: Flatstate) {
 	return function<C extends BaseElementClass>(Base: C): C {
 		return class extends Base {
-			#untracks: (() => void)[] = []
+			#stop: void | (() => void) = undefined
 
-			get flatwait() {
-				return Promise
-					.all(flats.map(flat => flat.wait))
-					.then(() => {})
+			constructor(...args: any[]) {
+				super(...args)
+				Object.defineProperty(this, "updateComplete", {
+					get: async() => {
+						await flat.wait
+						await super.updateComplete
+					},
+					set: () => {
+						throw new Error("updateComplete is readonly")
+					},
+				})
 			}
 
-			connectedCallback() {
-				super.connectedCallback()
+			render() {
+				if (this.#stop)
+					this.#stop()
 
-				for (const flat of flats) {
-					this.#untracks.push(flat.reaction(
-						() => this.render(),
-						() => this.requestUpdate(),
-					))
-				}
+				let result: void | TemplateResult = undefined
+
+				this.#stop = flat.reaction_core(
+					() => { result = super.render() },
+					() => { this.requestUpdate() },
+				)
+
+				return result
 			}
 
 			disconnectedCallback() {
 				super.disconnectedCallback()
 
-				for (const untrack of this.#untracks)
-					untrack()
+				if (this.#stop)
+					this.#stop()
 
-				this.#untracks = []
+				this.#stop = undefined
 			}
 		}
 	}
