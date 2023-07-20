@@ -1,5 +1,5 @@
 
-import {maptool, weakmaptool} from "../../tools/maptool.js"
+import {maptool} from "../../tools/maptool.js"
 import {ActiveTracking, Responder, Trackers} from "./types.js"
 
 const make_map = <K, V>() => new Map<K, V>()
@@ -14,7 +14,7 @@ export function save_active_tracking_to_trackers(
 	const undos: (() => void)[] = []
 
 	for (const [proxy, keys] of active_tracking.entries()) {
-		const keymap = weakmaptool(trackers).grab(proxy, make_map)
+		const keymap = maptool(trackers).grab(proxy, make_map)
 		for (const key of keys) {
 			const responders = maptool(keymap).grab(key, make_set)
 			responders.add(responder)
