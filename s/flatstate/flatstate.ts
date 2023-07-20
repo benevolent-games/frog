@@ -31,7 +31,6 @@ export class Flatstate {
 		const stop = save_active_tracking_to_trackers(
 			this.#trackers,
 			this.#active_tracking,
-			collector,
 			responder,
 		)
 

@@ -13,15 +13,9 @@ export function trigger_reactions(
 		throw new CircularFlatstateError(key)
 
 	const keymap: Keymap = trackers.get(target) ?? new Map()
-	const keytracks = keymap.get(key)
+	const responders = keymap.get(key)
 
-	if (keytracks) {
-		for (const [,responders] of keytracks.entries()) {
-			if (responders.size > 0) {
-				for (const responder of responders)
-					responder()
-			}
-		}
-	}
+	for (const responder of (responders ?? []))
+		responder()
 }
 
