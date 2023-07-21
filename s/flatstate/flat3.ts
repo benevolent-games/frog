@@ -7,13 +7,13 @@ const make_map = <K, V>() => new Map<K, V>()
 const make_set = <X>() => new Set<X>()
 
 class Scheduler {
-	#queue: (() => void)[] = []
+	#queue = new Map<symbol, () => void>()
 	#wait: Promise<void> = Promise.resolve()
 
 	#actuate = debounce(0, () => {
-		const queue = this.#queue
-		this.#queue = []
-		for (const fun of queue)
+		const functions = [...this.#queue.values()]
+		this.#queue = new Map()
+		for (const fun of functions)
 			fun()
 	})
 
@@ -21,8 +21,8 @@ class Scheduler {
 		return this.#wait
 	}
 
-	add(fun: () => void) {
-		this.#queue.push(fun)
+	add(symbol: symbol, fun: () => void) {
+		this.#queue.set(symbol, fun)
 		this.#wait = this.#actuate()
 	}
 }
@@ -86,10 +86,10 @@ export class Flatstate {
 			const symbolmap = maptool(keymap).grab(key, make_map)
 
 			for (const entry of [...symbolmap.entries()]) {
-				const [,reaction] = entry
+				const [symbol, reaction] = entry
 
 				if (reaction.debounce)
-					this.#scheduler.add(() => this.#respond_and_run_discovery(entry))
+					this.#scheduler.add(symbol, () => this.#respond_and_run_discovery(entry))
 				else
 					this.#respond_and_run_discovery(entry)
 			}

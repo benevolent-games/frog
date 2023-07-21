@@ -155,18 +155,38 @@ export default <Suite>{
 	async "debounce multiple changes"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
-		let calls = 0
+		const state2 = flat.state({count: 0})
+		let a = 0
+		let b = 0
+		let c = 0
 		flat.manual({
 			debounce: true,
 			discover: false,
 			collector: () => void state.count,
-			responder: () => calls++,
+			responder: () => a++,
+		})
+		flat.manual({
+			debounce: true,
+			discover: false,
+			collector: () => void state.count,
+			responder: () => b++,
+		})
+		flat.manual({
+			debounce: true,
+			discover: false,
+			collector: () => { void state2.count; void state2.count },
+			responder: () => c++,
 		})
 		state.count++
 		state.count++
 		state.count++
+		state2.count++
+		state2.count++
+		state2.count++
 		await flat.wait
-		expect(calls).equals(1)
+		expect(a).equals(1)
+		expect(b).equals(1)
+		expect(c).equals(1)
 	},
 
 	async "discovery of new nested states"() {
