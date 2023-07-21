@@ -6,11 +6,14 @@ import {Stopper} from "./parts/stopper.js"
 import {Recorder} from "./parts/recorder.js"
 import {readonly} from "./parts/readonly.js"
 import {Scheduler} from "./parts/scheduler.js"
+import {collectivize} from "./parts/collectivize.js"
 import {save_reaction} from "./parts/save_reaction.js"
 import {proxy_handlers} from "./parts/proxy_handlers.js"
 
 export class Flatstate {
 	static readonly = readonly
+	static collectivize = collectivize
+
 	#tracker = new Tracker()
 	#recorder = new Recorder()
 	#locker = new Locker()

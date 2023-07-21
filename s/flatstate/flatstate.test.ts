@@ -16,9 +16,10 @@ export default <Suite>{
 	async "react to change"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
+		const c = Flatstate.collectivize(state)
 		let calls = false
 		flat.reaction(
-			() => ({count: state.count}),
+			c(({count}) => ({count})),
 			() => { calls = true },
 		)
 		expect(calls).equals(false)
