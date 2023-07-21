@@ -1,10 +1,16 @@
 
 export type Fun = () => void
-export type Collector = Fun
-export type Responder = Fun
+export type KeySet = Set<string>
+export type Recording = Map<{}, KeySet>
 
-export type Keymap = Map<string, Set<Responder>>
-export type Trackers = WeakMap<{}, Keymap>
+export type Reaction = {
+	collector: Fun
+	responder: Fun
+	discover: boolean
+	debounce: boolean
+}
 
-export type ActiveTracking = Map<{}, Set<string>>
+export type SymbolMap = Map<symbol, Reaction>
+export type KeyMap = Map<string, SymbolMap>
+export type Tracking = WeakMap<{}, KeyMap>
 

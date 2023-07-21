@@ -1,54 +1,89 @@
 
+import {Locker} from "./parts/locker.js"
+import {Reaction} from "./parts/types.js"
+import {Tracker} from "./parts/tracker.js"
+import {Stopper} from "./parts/stopper.js"
+import {Recorder} from "./parts/recorder.js"
 import {readonly} from "./parts/readonly.js"
-import {setup_accessors} from "./parts/setup/accessors.js"
-import {ActiveTracking, Keymap, Trackers} from "./parts/types.js"
-import {save_active_tracking_to_trackers} from "./parts/save_active_tracking_to_trackers.js"
+import {Scheduler} from "./parts/scheduler.js"
+import {collectivize} from "./parts/collectivize.js"
+import {save_reaction} from "./parts/save_reaction.js"
+import {proxy_handlers} from "./parts/proxy_handlers.js"
 
 export class Flatstate {
 	static readonly = readonly
+	static collectivize = collectivize
 
-	#trackers: Trackers = new WeakMap<{}, Keymap>()
-	#active_tracking: undefined | ActiveTracking
+	#tracker = new Tracker()
+	#recorder = new Recorder()
+	#locker = new Locker()
+	#stopper = new Stopper()
+	#scheduler = new Scheduler()
 
-	#accessors = setup_accessors(
-		() => this.#trackers,
-		() => this.#active_tracking,
+	#proxy_handlers = proxy_handlers(
+		this.#tracker,
+		this.#recorder,
+		this.#locker,
+		this.#stopper,
+		this.#scheduler,
 	)
 
 	get wait() {
-		return this.#accessors.wait_for_debouncer
+		return this.#scheduler.wait
 	}
 
-	state<S extends {}>(init: S) {
-		const target: S = {...init}
-		return new Proxy(target, this.#accessors.proxy_handlers) as S
+	state<S extends {}>(state: S) {
+		return new Proxy<S>(state, this.#proxy_handlers)
 	}
 
-	reaction_core(collector: () => void, responder: () => void) {
-		this.#active_tracking = new Map()
-		collector()
-
-		const stop = save_active_tracking_to_trackers(
-			this.#trackers,
-			this.#active_tracking,
-			responder,
+	manual(reaction: Reaction) {
+		const symbol = Symbol()
+		const recorded = this.#recorder.record(
+			() => this.#locker.lock(reaction.collector)
 		)
+		this.#stopper.add(
+			symbol,
+			save_reaction(symbol, recorded, this.#tracker, reaction),
+		)
+		return () => this.#stopper.stop(symbol)
+	}
 
-		this.#active_tracking = undefined
-		return stop
+	auto<D>({debounce, discover, collector, responder}: {
+			debounce: boolean
+			discover: boolean
+			collector: () => D
+			responder?: (data: D) => void
+		}) {
+		return this.manual({
+			debounce,
+			discover,
+			collector,
+			responder: responder
+				? () => responder(collector())
+				: collector,
+		})
 	}
 
 	reaction<D>(collector: () => D, responder?: (data: D) => void) {
-		return this.reaction_core(
+		return this.auto({
+			debounce: true,
+			discover: false,
 			collector,
-			responder
-				? () => responder(collector())
-				: collector
-		)
+			responder,
+		})
+	}
+
+	deepReaction<D>(collector: () => D, responder?: (data: D) => void) {
+		return this.auto({
+			debounce: true,
+			discover: true,
+			collector,
+			responder,
+		})
 	}
 
 	clear() {
-		this.#trackers = new WeakMap()
+		this.#tracker.clear()
 	}
 }
 

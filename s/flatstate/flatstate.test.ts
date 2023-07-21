@@ -4,7 +4,7 @@ import {Flatstate} from "./flatstate.js"
 
 export default <Suite>{
 
-	async "we can increment a count"() {
+	async "increment state count"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
 		expect(state.count).equals(0)
@@ -13,103 +13,165 @@ export default <Suite>{
 		expect(state.count).equals(1)
 	},
 
-	async "we can react to a changed property"() {
+	async "react to change"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
-		let responder_calls = 0
+		const c = Flatstate.collectivize(state)
+		let calls = false
 		flat.reaction(
-			() => ({count: state.count}),
-			() => { responder_calls += 1 },
+			c(({count}) => ({count})),
+			() => { calls = true },
 		)
-		expect(responder_calls).equals(0)
+		expect(calls).equals(false)
 		expect(state.count).equals(0)
 		state.count = 123
 		await flat.wait
 		expect(state.count).equals(123)
-		expect(responder_calls).equals(1)
+		expect(calls).equals(true)
+	},
+
+	async "react to changes from two states"() {
+		const flat = new Flatstate()
+		const stateA = flat.state({alpha: 0})
+		const stateB = flat.state({bravo: 0})
+		const c = Flatstate.collectivize(() => ({...stateA, ...stateB}))
+		let calls = 0
+		flat.reaction(
+			c(({alpha, bravo}) => ({alpha, bravo})),
+			() => calls++,
+		)
+		calls = 0
+
+		stateA.alpha++
+		await flat.wait
+		expect(calls).equals(1)
+
+		stateB.bravo++
+		await flat.wait
+		expect(calls).equals(2)
 	},
 
 	async "reaction with only one function"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
-		let responder_calls = 0
+		let called = false
 		flat.reaction(() => {
 			void state.count
-			responder_calls += 1
+			called = true
 		})
-		expect(responder_calls).equals(1)
+		expect(called).equals(true)
 		expect(state.count).equals(0)
+		called = false
 		state.count = 123
 		await flat.wait
 		expect(state.count).equals(123)
-		expect(responder_calls).equals(2)
+		expect(called).equals(true)
 	},
 
 	async "reaction collector can pass data to responder"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0, greeting: "hello"})
-		let responder_count: number = -1
-		let responder_greeting: string = ""
+		let a: number = -1
+		let b: string = ""
 		flat.reaction(
 			() => ({count: state.count, greeting: state.greeting}),
 			({count, greeting}) => {
-				responder_count = count
-				responder_greeting = greeting
+				a = count
+				b = greeting
 			},
 		)
-		expect(responder_count).equals(-1)
-		expect(responder_greeting).equals("")
+		expect(a).equals(-1)
+		expect(b).equals("")
 		state.count++
 		state.greeting = "hello world"
 		await flat.wait
-		expect(responder_count).equals(1)
-		expect(responder_greeting).equals("hello world")
+		expect(a).equals(1)
+		expect(b).equals("hello world")
 	},
 
-	async "reaction_core is efficient"() {
+	async "manual can be efficient"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
-		let collections = 0
-		let responses = 0
-		flat.reaction_core(
-			() => {
+		let collect = false
+		let respond = false
+		flat.manual({
+			debounce: true,
+			discover: false,
+			collector: () => {
 				void state.count
-				collections++
+				collect = true
 			},
-			() => {
+			responder: () => {
 				void state.count
-				responses++
-			}
-		)
-		expect(collections).equals(1)
-		expect(responses).equals(0)
+				respond = true
+			},
+		})
+		expect(collect).equals(true)
+		expect(respond).equals(false)
+		collect = false
+		respond = false
 		state.count++
 		await flat.wait
-		expect(collections).equals(1)
-		expect(responses).equals(1)
+		expect(collect).equals(false)
+		expect(respond).equals(true)
+	},
+
+	async "efficient discovery"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		let collect = 0
+		let respond = 0
+		flat.manual({
+			debounce: true,
+			discover: true,
+			collector: () => {
+				void state.count
+				collect++
+			},
+			responder: () => {
+				respond++
+			},
+		})
+		expect(collect).equals(1)
+		expect(respond).equals(0)
+		state.count++
+		await flat.wait
+		expect(collect).equals(2)
+		expect(respond).equals(1)
 	},
 
 	async "circular loops are forbidden"() {
-		const flat = new Flatstate()
-		const state = flat.state({count: 0})
+		const settings = {debounce: true, discover: false}
+
 		await expect(async() => {
-			flat.reaction(
-				() => {
+			const flat = new Flatstate()
+			const state = flat.state({count: 0})
+			flat.manual({
+				...settings,
+				collector: () => {
 					state.count = 123
 					return {count: state.count}
 				},
-				() => {},
-			)
+				responder: () => {},
+			})
 			await flat.wait
 		}).throws()
+
 		await expect(async() => {
-			flat.reaction(
-				() => ({count: state.count}),
-				() => state.count = 123,
-			)
+			const flat = new Flatstate()
+			const state = flat.state({count: 0})
+			flat.manual({
+				...settings,
+				collector: () => ({count: state.count}),
+				responder: () => { state.count = 123 },
+			})
+			state.count++
 			await flat.wait
 		}).throws()
+
 		await expect(async() => {
+			const flat = new Flatstate()
+			const state = flat.state({count: 0})
 			flat.reaction(() => state.count = 123)
 			await flat.wait
 		}).throws()
@@ -118,32 +180,77 @@ export default <Suite>{
 	async "stop a reaction"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
-		let calls = 0
+		let called = false
 		const stop = flat.reaction(() => {
 			void state.count
-			calls += 1
+			called = true
 		})
-		state.count += 1
+
+		called = false
+		state.count++
 		await flat.wait
-		expect(calls).equals(2)
+		expect(called).equals(true)
+
+		called = false
 		stop()
-		state.count += 1
+		state.count++
 		await flat.wait
-		expect(calls).equals(2)
+		expect(called).equals(false)
 	},
 
 	async "debounce multiple changes"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
-		let calls = 0
-		flat.reaction(() => {
-			void state.count
-			calls += 1
+		const state2 = flat.state({count: 0})
+		let a = 0
+		let b = 0
+		let c = 0
+		flat.manual({
+			debounce: true,
+			discover: false,
+			collector: () => void state.count,
+			responder: () => a++,
 		})
-		state.count += 1
-		state.count += 1
+		flat.manual({
+			debounce: true,
+			discover: false,
+			collector: () => void state.count,
+			responder: () => b++,
+		})
+		flat.manual({
+			debounce: true,
+			discover: false,
+			collector: () => { void state2.count; void state2.count },
+			responder: () => c++,
+		})
+		state.count++
+		state.count++
+		state.count++
+		state2.count++
+		state2.count++
+		state2.count++
 		await flat.wait
-		expect(calls).equals(2)
+		expect(a).equals(1)
+		expect(b).equals(1)
+		expect(c).equals(1)
+	},
+
+	async "discovery of new nested states"() {
+		const flat = new Flatstate()
+		const outer = flat.state({
+			inner: undefined as (undefined | {count: number})
+		})
+		let last_count: undefined | number
+		flat.deepReaction(() => {
+			last_count = outer.inner?.count
+		})
+		expect(last_count).equals(undefined)
+		outer.inner = flat.state({count: 0})
+		await flat.wait
+		expect(last_count).equals(0)
+		outer.inner.count++
+		await flat.wait
+		expect(last_count).equals(1)
 	},
 
 	async "reactions are isolated"() {
@@ -156,46 +263,52 @@ export default <Suite>{
 		const stateB2 = flatB.state({count: 0})
 
 		const reactions = {
-			stateA1: 0,
-			stateA2: 0,
-			stateB1: 0,
-			stateB2: 0,
+			A1: false,
+			A2: false,
+			B1: false,
+			B2: false,
 		}
 
-		flatA.reaction(() => { void stateA1.count; reactions.stateA1++ })
-		flatA.reaction(() => { void stateA2.count; reactions.stateA2++ })
+		flatA.reaction(() => { void stateA1.count; reactions.A1 = true })
+		flatA.reaction(() => { void stateA2.count; reactions.A2 = true })
 
-		flatB.reaction(() => { void stateB1.count; reactions.stateB1++ })
-		flatB.reaction(() => { void stateB2.count; reactions.stateB2++ })
+		flatB.reaction(() => { void stateB1.count; reactions.B1 = true })
+		flatB.reaction(() => { void stateB2.count; reactions.B2 = true })
+
+		reactions.A1 = false
+		reactions.A2 = false
+		reactions.B1 = false
+		reactions.B2 = false
 
 		stateA1.count++
 		await Promise.all([flatA.wait, flatB.wait])
-		expect(reactions.stateA1).equals(2)
-		expect(reactions.stateA2).equals(1)
-		expect(reactions.stateB1).equals(1)
-		expect(reactions.stateB2).equals(1)
+		expect(reactions.A1).equals(true)
+		expect(reactions.A2).equals(false)
+		expect(reactions.B1).equals(false)
+		expect(reactions.B2).equals(false)
 
 		stateB1.count++
 		await Promise.all([flatA.wait, flatB.wait])
-		expect(reactions.stateA1).equals(2)
-		expect(reactions.stateA2).equals(1)
-		expect(reactions.stateB1).equals(2)
-		expect(reactions.stateB2).equals(1)
+		expect(reactions.A1).equals(true)
+		expect(reactions.A2).equals(false)
+		expect(reactions.B1).equals(true)
+		expect(reactions.B2).equals(false)
 	},
 
 	async "readonly works with reactions"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
 		const rstate = Flatstate.readonly(state)
-		let calls = 0
+		let called = false
 		flat.reaction(() => {
 			void rstate.count
-			calls++
+			called = true
 		})
-		expect(calls).equals(1)
+		expect(called).equals(true)
+		called = false
 		state.count++
 		await flat.wait
-		expect(calls).equals(2)
+		expect(called).equals(true)
 	},
 
 	async "readonly throws errors on writes"() {
@@ -209,15 +322,19 @@ export default <Suite>{
 	async "clear all reactions"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
-		let calls = 0
-		flat.reaction(() => { void state.count; calls++ })
+		let called = false
+		flat.reaction(() => { void state.count; called = true })
+
+		called = false
 		state.count++
 		await flat.wait
-		expect(calls).equals(2)
+		expect(called).equals(true)
+
+		called = false
 		flat.clear()
 		state.count++
 		await flat.wait
-		expect(calls).equals(2)
+		expect(called).equals(false)
 	},
 
 	async "nested states"() {
@@ -226,28 +343,33 @@ export default <Suite>{
 			count: 0,
 			inner: flat.state({count: 0})
 		})
-		let outer_calls = 0
-		let inner_calls = 0
+		let outer_called = false
+		let inner_called = false
 		flat.reaction(() => {
 			void outer.count
-			outer_calls++
+			outer_called = true
 		})
 		flat.reaction(() => {
 			void outer.inner.count
-			inner_calls++
+			inner_called = true
 		})
-		expect(outer_calls).equals(1)
-		expect(inner_calls).equals(1)
+		expect(outer_called).equals(true)
+		expect(inner_called).equals(true)
 
+		outer_called = false
+		inner_called = false
 		outer.count++
 		await flat.wait
-		expect(outer_calls).equals(2)
-		expect(inner_calls).equals(1)
+		expect(outer_called).equals(true)
+		expect(inner_called).equals(false)
 
+		outer_called = false
+		inner_called = false
 		outer.inner.count++
 		await flat.wait
-		expect(outer_calls).equals(2)
-		expect(inner_calls).equals(2)
+		expect(outer_called).equals(false)
+		expect(inner_called).equals(true)
 	},
+
 }
 

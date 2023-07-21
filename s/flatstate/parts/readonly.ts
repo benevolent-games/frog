@@ -1,5 +1,5 @@
 
-import {ForbiddenWriteFlatstateError} from "./errors.js"
+import {ReadonlyError} from "./errors.js"
 
 export function readonly<S extends {}>(s: S) {
 	return new Proxy(s, {
@@ -9,7 +9,7 @@ export function readonly<S extends {}>(s: S) {
 		},
 
 		set(_, key: string) {
-			throw new ForbiddenWriteFlatstateError(key)
+			throw new ReadonlyError(key)
 		},
 	})
 }

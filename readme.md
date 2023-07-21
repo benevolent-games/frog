@@ -66,6 +66,44 @@ flatstate is inspired by mobx and snapstate, but designed to be really simple: f
   flat.clear()
   ```
 
+### flatstate reactions
+
+- so first, there's a simple one-function reaction:
+  ```ts
+  flat.reaction(() => console.log(state.count))
+  ```
+  - flatstate immediately runs the function, and records which properties it reads
+  - then, anytime one of those properties changes, it runs your function again
+- you can also do a two-function reaction:
+  ```ts
+  flat.reaction(
+    () => ({count: state.count}),
+    ({count}) => console.log(count),
+  )
+  ```
+  - now there's a separation between your "collector" and your "responder"
+  - the collector "passes" relevant data to the responder function
+  - flatstate calls the responder whenever that data changes
+- there's also this helper called "collectivize" if you prefer the syntax sugar:
+  ```ts
+  const c = Flatstate.collectivize(state)
+
+  flat.reaction(
+    c(({count}) => ({count})),
+    ({count}) => console.log(count)
+  )
+  ```
+- there's also something called "deepReaction"
+  ```ts
+  flat.deepReaction(() => console.log(state.count))
+  ```
+  - it's the same as "reaction", but it has "discovery" enabled
+  - discovery means the collector is checked again for every responder call
+  - it's less efficient, but allows you to respond to deeply nested recursive structures
+- there's also `.auto` and `.manual` reactions
+  - these allow you to set options like `discovery` and `debounce` (you can turn off the debouncer)
+  - but that's bigbrain stuff that you'll have to read the sourcecode about
+
 ### flatstate advanced
 
 - multiple flatstate instances are totally isolated from each other
@@ -82,8 +120,9 @@ flatstate is inspired by mobx and snapstate, but designed to be really simple: f
   await flat.wait
   console.log(rstate.count) //-> 1
 
-  rstate.count = 2 // !! ForbiddenWriteFlatstateError !!
+  rstate.count = 2 // !! ReadonlyError !!
   ```
+  - btw, you can use readonly on anything, not just flatstate
 
 ### flatstate integration with frontend elements
 
