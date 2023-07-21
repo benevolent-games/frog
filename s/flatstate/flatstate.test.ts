@@ -94,6 +94,30 @@ export default <Suite>{
 		expect(respond).equals(true)
 	},
 
+	async "efficient discovery"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		let collect = 0
+		let respond = 0
+		flat.manual({
+			debounce: true,
+			discover: true,
+			collector: () => {
+				void state.count
+				collect++
+			},
+			responder: () => {
+				respond++
+			},
+		})
+		expect(collect).equals(1)
+		expect(respond).equals(0)
+		state.count++
+		await flat.wait
+		expect(collect).equals(2)
+		expect(respond).equals(1)
+	},
+
 	async "circular loops are forbidden"() {
 		const settings = {debounce: true, discover: false}
 
