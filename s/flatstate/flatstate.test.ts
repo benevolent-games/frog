@@ -30,6 +30,27 @@ export default <Suite>{
 		expect(calls).equals(true)
 	},
 
+	async "react to changes from two states"() {
+		const flat = new Flatstate()
+		const stateA = flat.state({alpha: 0})
+		const stateB = flat.state({bravo: 0})
+		const c = Flatstate.collectivize(() => ({...stateA, ...stateB}))
+		let calls = 0
+		flat.reaction(
+			c(({alpha, bravo}) => ({alpha, bravo})),
+			() => calls++,
+		)
+		calls = 0
+
+		stateA.alpha++
+		await flat.wait
+		expect(calls).equals(1)
+
+		stateB.bravo++
+		await flat.wait
+		expect(calls).equals(2)
+	},
+
 	async "reaction with only one function"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
