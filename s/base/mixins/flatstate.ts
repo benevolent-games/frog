@@ -28,10 +28,16 @@ export function mixinFlatstate(flat: Flatstate) {
 
 				let result: void | TemplateResult = undefined
 
-				this.#stop = flat.reaction_core(
-					() => { result = super.render() },
-					() => { this.requestUpdate() },
-				)
+				this.#stop = flat.manual({
+					debounce: true,
+					discover: true,
+					collector: () => {
+						result = super.render()
+					},
+					responder: () => {
+						this.requestUpdate()
+					},
+				})
 
 				return result
 			}

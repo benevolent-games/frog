@@ -1,6 +1,6 @@
 
 import {Suite, expect} from "cynic"
-import {Flatstate} from "./flat3.js"
+import {Flatstate} from "./flatstate.js"
 
 export default <Suite>{
 
@@ -195,7 +195,7 @@ export default <Suite>{
 			inner: undefined as (undefined | {count: number})
 		})
 		let last_count: undefined | number
-		flat.reaction(() => {
+		flat.deepReaction(() => {
 			last_count = outer.inner?.count
 		})
 		expect(last_count).equals(undefined)

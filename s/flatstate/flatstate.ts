@@ -30,7 +30,7 @@ export class Flatstate {
 	}
 
 	state<S extends {}>(state: S) {
-		return new Proxy(state, this.#proxy_handlers)
+		return new Proxy<S>(state, this.#proxy_handlers)
 	}
 
 	manual(reaction: Reaction) {
@@ -64,16 +64,16 @@ export class Flatstate {
 	reaction<D>(collector: () => D, responder?: (data: D) => void) {
 		return this.auto({
 			debounce: true,
-			discover: true,
+			discover: false,
 			collector,
 			responder,
 		})
 	}
 
-	reaction_lean<D>(collector: () => D, responder?: (data: D) => void) {
+	deepReaction<D>(collector: () => D, responder?: (data: D) => void) {
 		return this.auto({
 			debounce: true,
-			discover: false,
+			discover: true,
 			collector,
 			responder,
 		})
