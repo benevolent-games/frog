@@ -207,5 +207,123 @@ export default <Suite>{
 		expect(last_count).equals(1)
 	},
 
+	async "reactions are isolated"() {
+		const flatA = new Flatstate()
+		const stateA1 = flatA.state({count: 0})
+		const stateA2 = flatA.state({count: 0})
+
+		const flatB = new Flatstate()
+		const stateB1 = flatB.state({count: 0})
+		const stateB2 = flatB.state({count: 0})
+
+		const reactions = {
+			A1: false,
+			A2: false,
+			B1: false,
+			B2: false,
+		}
+
+		flatA.reaction(() => { void stateA1.count; reactions.A1 = true })
+		flatA.reaction(() => { void stateA2.count; reactions.A2 = true })
+
+		flatB.reaction(() => { void stateB1.count; reactions.B1 = true })
+		flatB.reaction(() => { void stateB2.count; reactions.B2 = true })
+
+		reactions.A1 = false
+		reactions.A2 = false
+		reactions.B1 = false
+		reactions.B2 = false
+
+		stateA1.count++
+		await Promise.all([flatA.wait, flatB.wait])
+		expect(reactions.A1).equals(true)
+		expect(reactions.A2).equals(false)
+		expect(reactions.B1).equals(false)
+		expect(reactions.B2).equals(false)
+
+		stateB1.count++
+		await Promise.all([flatA.wait, flatB.wait])
+		expect(reactions.A1).equals(true)
+		expect(reactions.A2).equals(false)
+		expect(reactions.B1).equals(true)
+		expect(reactions.B2).equals(false)
+	},
+
+	async "readonly works with reactions"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		const rstate = Flatstate.readonly(state)
+		let called = false
+		flat.reaction(() => {
+			void rstate.count
+			called = true
+		})
+		expect(called).equals(true)
+		called = false
+		state.count++
+		await flat.wait
+		expect(called).equals(true)
+	},
+
+	async "readonly throws errors on writes"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		const rstate = Flatstate.readonly(state)
+		expect(() => { state.count++ }).not.throws()
+		expect(() => { rstate.count++ }).throws()
+	},
+
+	async "clear all reactions"() {
+		const flat = new Flatstate()
+		const state = flat.state({count: 0})
+		let called = false
+		flat.reaction(() => { void state.count; called = true })
+
+		called = false
+		state.count++
+		await flat.wait
+		expect(called).equals(true)
+
+		called = false
+		flat.clear()
+		state.count++
+		await flat.wait
+		expect(called).equals(false)
+	},
+
+	async "nested states"() {
+		const flat = new Flatstate()
+		const outer = flat.state({
+			count: 0,
+			inner: flat.state({count: 0})
+		})
+		let outer_called = false
+		let inner_called = false
+		flat.reaction(() => {
+			void outer.count
+			outer_called = true
+		})
+		flat.reaction(() => {
+			void outer.inner.count
+			inner_called = true
+		})
+		expect(outer_called).equals(true)
+		expect(inner_called).equals(true)
+
+		outer_called = false
+		inner_called = false
+		outer.count++
+		await flat.wait
+		expect(outer_called).equals(true)
+		expect(inner_called).equals(false)
+
+		outer_called = false
+		inner_called = false
+		outer.inner.count++
+		await flat.wait
+		expect(outer_called).equals(false)
+		expect(inner_called).equals(true)
+	},
+
 }
 

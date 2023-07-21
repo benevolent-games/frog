@@ -1,5 +1,6 @@
 
 import {maptool} from "../tools/maptool.js"
+import {readonly} from "./parts/readonly.js"
 import {debounce} from "../tools/debounce.js"
 import {CircularFlatstateError} from "./parts/errors.js"
 
@@ -28,6 +29,7 @@ class Scheduler {
 }
 
 export class Flatstate {
+	static readonly = readonly
 	#tracking: Tracking = new WeakMap()
 	#stoppers = new Map<symbol, () => void>()
 	#stop(symbol: symbol) {
@@ -148,6 +150,10 @@ export class Flatstate {
 			collector,
 			responder,
 		})
+	}
+
+	clear() {
+		this.#tracking = new WeakMap()
 	}
 }
 
