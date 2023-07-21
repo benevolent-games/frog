@@ -4,23 +4,22 @@ import {TemplateResult} from "lit"
 import {BaseElementClass} from "../element.js"
 import {Flatstate} from "../../flatstate/flatstate.js"
 
+/*
+
+this flatstate mixin uses a bizarre strategy for optimizaton purposes.
+
++ on every render, we stop/reassign a new manual reaction.
++ discover is false, because we essentially emulate it
+	by assigning a new reaction every render,
+	using the current render as a new collector.
++ debounce is false, because lit's requestUpdate does that.
+
+*/
+
 export function mixinFlatstate(flat: Flatstate) {
 	return function<C extends BaseElementClass>(Base: C): C {
 		return class extends Base {
 			#stop: void | (() => void) = undefined
-
-			constructor(...args: any[]) {
-				super(...args)
-				Object.defineProperty(this, "updateComplete", {
-					get: async() => {
-						await flat.wait
-						await super.updateComplete
-					},
-					set: () => {
-						throw new Error("updateComplete is readonly")
-					},
-				})
-			}
 
 			render() {
 				if (this.#stop)
@@ -29,8 +28,8 @@ export function mixinFlatstate(flat: Flatstate) {
 				let result: void | TemplateResult = undefined
 
 				this.#stop = flat.manual({
-					debounce: true,
-					discover: true,
+					debounce: false,
+					discover: false,
 					collector: () => {
 						result = super.render()
 					},
