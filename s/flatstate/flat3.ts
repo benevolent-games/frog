@@ -1,9 +1,31 @@
 
 import {maptool} from "../tools/maptool.js"
+import {debounce} from "../tools/debounce.js"
 import {CircularFlatstateError} from "./parts/errors.js"
 
 const make_map = <K, V>() => new Map<K, V>()
 const make_set = <X>() => new Set<X>()
+
+class Scheduler {
+	#queue: (() => void)[] = []
+	#wait: Promise<void> = Promise.resolve()
+
+	#actuate = debounce(0, () => {
+		const queue = this.#queue
+		this.#queue = []
+		for (const fun of queue)
+			fun()
+	})
+
+	get wait() {
+		return this.#wait
+	}
+
+	add(fun: () => void) {
+		this.#queue.push(fun)
+		this.#wait = this.#actuate()
+	}
+}
 
 export class Flatstate {
 	#tracking: Tracking = new WeakMap()
@@ -32,11 +54,28 @@ export class Flatstate {
 		return recording
 	}
 
+	#scheduler = new Scheduler()
+
+	#respond_and_run_discovery([symbol, reaction]: [symbol, Reaction]) {
+		this.#lock(reaction.responder)
+
+		if (reaction.discover) {
+			this.#stop(symbol)
+			const recorded = this.#record(reaction.collector)
+			this.#stoppers.set(
+				symbol,
+				save_reaction(symbol, recorded, this.#tracking, reaction),
+			)
+		}
+	}
+
 	#proxy_handlers: ProxyHandler<any> = {
+
 		get: (state, key: string) => {
 			record_key(this.#recording, state, key)
 			return state[key]
 		},
+
 		set: (state, key: string, value: any) => {
 			if (this.#locked)
 				throw new CircularFlatstateError(key)
@@ -46,17 +85,13 @@ export class Flatstate {
 			const keymap = maptool(this.#tracking).grab(state, make_map)
 			const symbolmap = maptool(keymap).grab(key, make_map)
 
-			for (const [symbol, reaction] of [...symbolmap.entries()]) {
-				this.#lock(reaction.responder)
+			for (const entry of [...symbolmap.entries()]) {
+				const [,reaction] = entry
 
-				if (reaction.discovery) {
-					this.#stop(symbol)
-					const recorded = this.#record(reaction.collector)
-					this.#stoppers.set(
-						symbol,
-						save_reaction(symbol, recorded, this.#tracking, reaction),
-					)
-				}
+				if (reaction.debounce)
+					this.#scheduler.add(() => this.#respond_and_run_discovery(entry))
+				else
+					this.#respond_and_run_discovery(entry)
 			}
 
 			return true
@@ -64,7 +99,7 @@ export class Flatstate {
 	}
 
 	get wait() {
-		return Promise.resolve()
+		return this.#scheduler.wait
 	}
 
 	state<S extends {}>(state: S) {
@@ -81,13 +116,37 @@ export class Flatstate {
 		return () => this.#stop(symbol)
 	}
 
-	reaction<D>(collector: () => D, responder?: (data: D) => void) {
+	auto<D>({debounce, discover, collector, responder}: {
+			debounce: boolean
+			discover: boolean
+			collector: () => D
+			responder?: (data: D) => void
+		}) {
 		return this.manual({
-			discovery: true,
+			debounce,
+			discover,
 			collector,
 			responder: responder
 				? () => responder(collector())
 				: collector,
+		})
+	}
+
+	reaction<D>(collector: () => D, responder?: (data: D) => void) {
+		return this.auto({
+			debounce: true,
+			discover: true,
+			collector,
+			responder,
+		})
+	}
+
+	reaction_lean<D>(collector: () => D, responder?: (data: D) => void) {
+		return this.auto({
+			debounce: true,
+			discover: false,
+			collector,
+			responder,
 		})
 	}
 }
@@ -98,8 +157,10 @@ type Recording = Map<{}, KeySet>
 type Reaction = {
 	collector: () => void
 	responder: () => void
-	discovery: boolean
+	discover: boolean
+	debounce: boolean
 }
+
 type SymbolMap = Map<symbol, Reaction>
 type KeyMap = Map<string, SymbolMap>
 type Tracking = WeakMap<{}, KeyMap>
