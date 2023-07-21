@@ -45,5 +45,23 @@ export default <Suite>{
 	// 	expect(responder_calls).equals(2)
 	// },
 
+	async "discovery of new nested states"() {
+		const flat = new Flatstate()
+		const outer = flat.state({
+			inner: undefined as (undefined | {count: number})
+		})
+		let last_count: undefined | number
+		flat.reaction(() => {
+			last_count = outer.inner?.count
+		})
+		expect(last_count).equals(undefined)
+		outer.inner = flat.state({count: 0})
+		await flat.wait
+		expect(last_count).equals(0)
+		outer.inner.count++
+		await flat.wait
+		expect(last_count).equals(1)
+	},
+
 }
 

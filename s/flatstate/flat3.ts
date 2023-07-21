@@ -45,21 +45,18 @@ export class Flatstate {
 
 			const keymap = maptool(this.#tracking).grab(state, make_map)
 			const symbolmap = maptool(keymap).grab(key, make_map)
-			const todo: [symbol, Reaction][] = []
 
-			for (const entry of symbolmap.entries()) {
-				const [,reaction] = entry
+			for (const [symbol, reaction] of [...symbolmap.entries()]) {
 				this.#lock(reaction.responder)
-				todo.push(entry)
-			}
 
-			for (const [symbol, reaction] of todo) {
-				this.#stop(symbol)
-				const recorded = this.#record(reaction.collector)
-				this.#stoppers.set(
-					symbol,
-					save_reaction(symbol, recorded, this.#tracking, reaction),
-				)
+				if (reaction.discovery) {
+					this.#stop(symbol)
+					const recorded = this.#record(reaction.collector)
+					this.#stoppers.set(
+						symbol,
+						save_reaction(symbol, recorded, this.#tracking, reaction),
+					)
+				}
 			}
 
 			return true
@@ -86,6 +83,7 @@ export class Flatstate {
 
 	reaction<D>(collector: () => D, responder?: (data: D) => void) {
 		return this.manual({
+			discovery: true,
 			collector,
 			responder: responder
 				? () => responder(collector())
@@ -97,7 +95,11 @@ export class Flatstate {
 type KeySet = Set<string>
 type Recording = Map<{}, KeySet>
 
-type Reaction = {collector: () => void, responder: () => void}
+type Reaction = {
+	collector: () => void
+	responder: () => void
+	discovery: boolean
+}
 type SymbolMap = Map<symbol, Reaction>
 type KeyMap = Map<string, SymbolMap>
 type Tracking = WeakMap<{}, KeyMap>
