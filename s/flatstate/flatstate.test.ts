@@ -4,7 +4,7 @@ import {Flatstate} from "./flatstate.js"
 
 export default <Suite>{
 
-	async "we can increment a count"() {
+	async "increment state count"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
 		expect(state.count).equals(0)
@@ -13,7 +13,7 @@ export default <Suite>{
 		expect(state.count).equals(1)
 	},
 
-	async "we can react to a changed property"() {
+	async "react to change"() {
 		const flat = new Flatstate()
 		const state = flat.state({count: 0})
 		let calls = false
