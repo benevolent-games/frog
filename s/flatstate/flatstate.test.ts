@@ -9,7 +9,6 @@ export default <Suite>{
 		const state = flat.state({count: 0})
 		expect(state.count).equals(0)
 		state.count += 1
-		await flat.wait
 		expect(state.count).equals(1)
 	},
 
