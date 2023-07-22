@@ -6,8 +6,10 @@ import {AsyncDirective} from "lit/async-directive.js"
 
 import {Flatstate} from "../flatstate/flatstate.js"
 
+export type FlatviewContext<S extends {}, A extends {}> = {state: S, actions: A}
+
 export type FlatviewRenderer<S extends {}, A extends {}, P extends any[]> = (
-	(o: {state: S, actions: A}) => (...props: P) => TemplateResult | void
+	(context: FlatviewContext<S, A>) => (...props: P) => TemplateResult | void
 )
 
 export type FlatviewOptions = {
@@ -26,8 +28,11 @@ export type UnwrapDeferredFlatviewGroup<F extends DeferredFlatviewGroup> = {
 	[P in keyof F]: ReturnType<F[P]>
 }
 
+export type FlatviewSetup<S extends {}, A extends {}> = (context: FlatviewContext<S, A>) => () => void
+
 function final<S extends {}, A extends {}, P extends any[]>({
 		css,
+		setup,
 		renderer,
 		initstate,
 		initactions,
@@ -35,21 +40,32 @@ function final<S extends {}, A extends {}, P extends any[]>({
 	}: FlatviewOptions & {
 		initstate: S
 		initactions: (s: S) => A
+		setup: FlatviewSetup<S, A>
 		renderer: FlatviewRenderer<S, A, P>
 		css?: CSSResultGroup
 	}) {
 
-	const state = options.strict
-		? Flatstate.readonly(options.flat.state(initstate))
-		: options.flat.state(initstate)
+	const state = options.flat.state(initstate)
 	const actions = initactions(state)
-	const render = renderer({state, actions})
+
+	const o = {
+		actions,
+		state: options.strict
+			? Flatstate.readonly(state)
+			: state,
+	}
+
+	const render = renderer(o)
 
 	return directive(class extends AsyncDirective {
 		#recent_props?: P
+		#unsetup?: void | (() => void)
 		#stop?: () => void
 
 		render(...props: P) {
+			if (!this.#unsetup)
+				this.#unsetup = setup(o)
+
 			this.#recent_props = props
 
 			if (this.#stop)
@@ -74,10 +90,14 @@ function final<S extends {}, A extends {}, P extends any[]>({
 		}
 
 		disconnected() {
-			if (this.#stop)
+			if (this.#stop) {
 				this.#stop()
-
-			this.#stop = undefined
+				this.#stop = undefined
+			}
+			if (this.#unsetup) {
+				this.#unsetup()
+				this.#unsetup = undefined
+			}
 		}
 	}) as Flatview<P>
 }
@@ -86,10 +106,12 @@ export function flatview(options: FlatviewOptions) {
 	return {
 		state: <S extends {}>(initstate: S) => ({
 			actions: <A extends {}>(initactions: (state: S) => A) => ({
-				render: <P extends any[]>(renderer: FlatviewRenderer<S, A, P>) => ({
-					css: (css?: CSSResultGroup) => (
-						final({...options, initstate, initactions, renderer, css})
-					)
+				setup: (setup: FlatviewSetup<S, A>) => ({
+					render: <P extends any[]>(renderer: FlatviewRenderer<S, A, P>) => ({
+						css: (css?: CSSResultGroup) => (
+							final<S, A, P>({...options, initstate, initactions, setup, renderer, css})
+						)
+					})
 				})
 			})
 		})
