@@ -6,48 +6,49 @@ import {AsyncDirective} from "lit/async-directive.js"
 import {Flatstate} from "../flatstate/flatstate.js"
 
 export function flatview<S extends {}, P extends any[]>(options: {
-		css?: CSSResultGroup,
 		state: S,
+		css?: CSSResultGroup,
 		render(state: S, ...props: P): TemplateResult | void
 	}) {
 
-	const flat = new Flatstate()
-	const state = flat.state(options.state)
+	return (flat: Flatstate) => {
+		const state = flat.state(options.state)
 
-	return directive(class extends AsyncDirective {
-		#recent_props?: P
-		#stop?: () => void
+		return directive(class extends AsyncDirective {
+			#recent_props?: P
+			#stop?: () => void
 
-		render(...props: P) {
-			this.#recent_props = props
+			render(...props: P) {
+				this.#recent_props = props
 
-			if (this.#stop)
-				this.#stop()
+				if (this.#stop)
+					this.#stop()
 
-			let result: TemplateResult | void
+				let result: TemplateResult | void = undefined
 
-			this.#stop = flat.manual({
-				debounce: true,
-				discover: false,
-				collector: () => {
-					result = options.render(state, ...props)
-				},
-				responder: () => {
-					this.setValue(
-						this.render(...this.#recent_props!)
-					)
-				},
-			})
+				this.#stop = flat.manual({
+					debounce: true,
+					discover: false,
+					collector: () => {
+						result = options.render(state, ...props)
+					},
+					responder: () => {
+						this.setValue(
+							this.render(...this.#recent_props!)
+						)
+					},
+				})
 
-			return options.render(state, ...props)
-		}
+				return result
+			}
 
-		disconnected() {
-			if (this.#stop)
-				this.#stop()
+			disconnected() {
+				if (this.#stop)
+					this.#stop()
 
-			this.#stop = undefined
-		}
-	}) as (...props: P) => TemplateResult | void
+				this.#stop = undefined
+			}
+		}) as (...props: P) => TemplateResult | void
+	}
 }
 
