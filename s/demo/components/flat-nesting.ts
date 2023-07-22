@@ -31,7 +31,6 @@ export const FlatNesting = (context: Context) => class extends QuickElement {
 	}
 
 	render() {
-		console.log("render")
 		return html`
 			<p class=tag>&lt;flat-nesting&gt;</p>
 			${context.state.nest.map(egg => egg.count.toString()).join(",")}
