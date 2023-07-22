@@ -9,6 +9,7 @@ export const common_styles = css`
 		justify-content: flex-start;
 		gap: 0.5em;
 		border-radius: 0.5em;
+		background: #52ffc122;
 	}
 
 	:host > * {

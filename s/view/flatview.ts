@@ -18,7 +18,7 @@ export type FlatviewOptions = {
 	strict: boolean
 }
 
-export type Flatview<P extends any[]> = (...props: P) => TemplateResult | void
+export type Flatview<P extends any[]> = (...props: P) => TemplateResult<any> | void
 
 export type DeferredFlatviewGroup = {
 	[key: string]: (flat: Flatstate) => Flatview<any>

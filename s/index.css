@@ -56,10 +56,6 @@ a {
 			> :nth-child(1) { color: #3db2ca; }
 			> :nth-child(2) { color: #8fc91b; }
 		}
-
-		> :is(local-counter, app-counter-display, app-counter-button, flat-counter, flat-nesting) {
-			background: #52ffc122;
-		}
 	}
 }
 

@@ -3,6 +3,7 @@ import {css} from "lit"
 
 import {Context} from "./context.js"
 import {Pipe} from "../tools/pipe.js"
+import {FlatViewer} from "./components/flat-viewer.js"
 import {FlatNesting} from "./components/flat-nesting.js"
 import {FlatCounter} from "./components/flat-counter.js"
 import {LocalCounter} from "./components/local-counter.js"
@@ -19,6 +20,7 @@ export const elements = {
 	AppCounterDisplay,
 	FlatCounter,
 	FlatNesting,
+	FlatViewer,
 }
 
 export const default_theme = css`
