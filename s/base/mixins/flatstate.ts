@@ -2,7 +2,7 @@
 import {TemplateResult} from "lit"
 
 import {BaseElementClass} from "../element.js"
-import {Flatstate} from "../../flatstate/flatstate.js"
+import {Flat} from "../../flatstate/flat.js"
 
 /*
 
@@ -16,7 +16,7 @@ this flatstate mixin uses a bizarre strategy for optimizaton purposes.
 
 */
 
-export function mixinFlatstate(flat: Flatstate) {
+export function mixinFlatstate(flat: Flat) {
 	return function<C extends BaseElementClass>(Base: C): C {
 		return class extends Base {
 			#stop: void | (() => void) = undefined

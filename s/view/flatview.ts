@@ -4,7 +4,7 @@ import {obtool} from "@chasemoskal/magical"
 import {CSSResultGroup, TemplateResult} from "lit"
 import {AsyncDirective} from "lit/async-directive.js"
 
-import {Flatstate} from "../flatstate/flatstate.js"
+import {Flat} from "../flatstate/flat.js"
 
 export type FlatviewContext<S extends {}, A extends {}> = {state: S, actions: A}
 
@@ -13,7 +13,7 @@ export type FlatviewRenderer<S extends {}, A extends {}, P extends any[]> = (
 )
 
 export type FlatviewOptions = {
-	flat: Flatstate
+	flat: Flat
 	shadow: boolean
 	strict: boolean
 }
@@ -21,7 +21,7 @@ export type FlatviewOptions = {
 export type Flatview<P extends any[]> = (...props: P) => TemplateResult<any> | void
 
 export type DeferredFlatviewGroup = {
-	[key: string]: (flat: Flatstate) => Flatview<any>
+	[key: string]: (flat: Flat) => Flatview<any>
 }
 
 export type UnwrapDeferredFlatviewGroup<F extends DeferredFlatviewGroup> = {
@@ -51,7 +51,7 @@ function final<S extends {}, A extends {}, P extends any[]>({
 	const o = {
 		actions,
 		state: options.strict
-			? Flatstate.readonly(state)
+			? Flat.readonly(state)
 			: state,
 	}
 
@@ -118,7 +118,7 @@ export function flatview(options: FlatviewOptions) {
 	}
 }
 
-flatview.provide = function<F extends DeferredFlatviewGroup>(flat: Flatstate) {
+flatview.provide = function<F extends DeferredFlatviewGroup>(flat: Flat) {
 	return (group: F) => (
 		obtool(group)
 			.map(view => view(flat)) as UnwrapDeferredFlatviewGroup<F>

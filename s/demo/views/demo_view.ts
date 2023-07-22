@@ -1,9 +1,9 @@
 
 import {html} from "lit"
 import {flatview} from "../../view/flatview.js"
-import {Flatstate} from "../../flatstate/flatstate.js"
+import {Flat} from "../../flatstate/flat.js"
 
-export const DemoView = flatview({flat: new Flatstate(), shadow: false, strict: true})
+export const DemoView = flatview({flat: new Flat(), shadow: false, strict: true})
 	.state({count: 0})
 	.actions(state => ({
 		increment() {

@@ -10,7 +10,7 @@ import {collectivize} from "./parts/collectivize.js"
 import {save_reaction} from "./parts/save_reaction.js"
 import {proxy_handlers} from "./parts/proxy_handlers.js"
 
-export class Flatstate {
+export class Flat {
 	static readonly = readonly
 	static collectivize = collectivize
 

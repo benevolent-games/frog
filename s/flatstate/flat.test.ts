@@ -1,11 +1,11 @@
 
 import {Suite, expect} from "cynic"
-import {Flatstate} from "./flatstate.js"
+import {Flat} from "./flat.js"
 
 export default <Suite>{
 
 	async "increment state count"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
 		expect(state.count).equals(0)
 		state.count += 1
@@ -13,9 +13,9 @@ export default <Suite>{
 	},
 
 	async "react to change"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
-		const c = Flatstate.collectivize(state)
+		const c = Flat.collectivize(state)
 		let calls = false
 		flat.reaction(
 			c(({count}) => ({count})),
@@ -30,10 +30,10 @@ export default <Suite>{
 	},
 
 	async "react to changes from two states"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const stateA = flat.state({alpha: 0})
 		const stateB = flat.state({bravo: 0})
-		const c = Flatstate.collectivize(() => ({...stateA, ...stateB}))
+		const c = Flat.collectivize(() => ({...stateA, ...stateB}))
 		let calls = 0
 		flat.reaction(
 			c(({alpha, bravo}) => ({alpha, bravo})),
@@ -51,7 +51,7 @@ export default <Suite>{
 	},
 
 	async "reaction with only one function"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
 		let called = false
 		flat.reaction(() => {
@@ -68,7 +68,7 @@ export default <Suite>{
 	},
 
 	async "reaction collector can pass data to responder"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0, greeting: "hello"})
 		let a: number = -1
 		let b: string = ""
@@ -89,7 +89,7 @@ export default <Suite>{
 	},
 
 	async "manual can be efficient"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
 		let collect = false
 		let respond = false
@@ -116,7 +116,7 @@ export default <Suite>{
 	},
 
 	async "efficient discovery"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
 		let collect = 0
 		let respond = 0
@@ -143,7 +143,7 @@ export default <Suite>{
 		const settings = {debounce: true, discover: false}
 
 		await expect(async() => {
-			const flat = new Flatstate()
+			const flat = new Flat()
 			const state = flat.state({count: 0})
 			flat.manual({
 				...settings,
@@ -157,7 +157,7 @@ export default <Suite>{
 		}).throws()
 
 		await expect(async() => {
-			const flat = new Flatstate()
+			const flat = new Flat()
 			const state = flat.state({count: 0})
 			flat.manual({
 				...settings,
@@ -169,7 +169,7 @@ export default <Suite>{
 		}).throws()
 
 		await expect(async() => {
-			const flat = new Flatstate()
+			const flat = new Flat()
 			const state = flat.state({count: 0})
 			flat.reaction(() => state.count = 123)
 			await flat.wait
@@ -177,7 +177,7 @@ export default <Suite>{
 	},
 
 	async "stop a reaction"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
 		let called = false
 		const stop = flat.reaction(() => {
@@ -198,7 +198,7 @@ export default <Suite>{
 	},
 
 	async "debounce multiple changes"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
 		const state2 = flat.state({count: 0})
 		let a = 0
@@ -235,7 +235,7 @@ export default <Suite>{
 	},
 
 	async "discovery of new nested states"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const outer = flat.state({
 			inner: undefined as (undefined | {count: number})
 		})
@@ -253,11 +253,11 @@ export default <Suite>{
 	},
 
 	async "reactions are isolated"() {
-		const flatA = new Flatstate()
+		const flatA = new Flat()
 		const stateA1 = flatA.state({count: 0})
 		const stateA2 = flatA.state({count: 0})
 
-		const flatB = new Flatstate()
+		const flatB = new Flat()
 		const stateB1 = flatB.state({count: 0})
 		const stateB2 = flatB.state({count: 0})
 
@@ -295,9 +295,9 @@ export default <Suite>{
 	},
 
 	async "readonly works with reactions"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
-		const rstate = Flatstate.readonly(state)
+		const rstate = Flat.readonly(state)
 		let called = false
 		flat.reaction(() => {
 			void rstate.count
@@ -311,15 +311,15 @@ export default <Suite>{
 	},
 
 	async "readonly throws errors on writes"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
-		const rstate = Flatstate.readonly(state)
+		const rstate = Flat.readonly(state)
 		expect(() => { state.count++ }).not.throws()
 		expect(() => { rstate.count++ }).throws()
 	},
 
 	async "clear all reactions"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const state = flat.state({count: 0})
 		let called = false
 		flat.reaction(() => { void state.count; called = true })
@@ -337,7 +337,7 @@ export default <Suite>{
 	},
 
 	async "nested states"() {
-		const flat = new Flatstate()
+		const flat = new Flat()
 		const outer = flat.state({
 			count: 0,
 			inner: flat.state({count: 0})
