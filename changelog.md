@@ -1,4 +1,12 @@
 
+- (!) gut `QuickElement`
+  - cues ripped out of QuickElement
+  - attributes addon ripped out QuickElement
+  - goal is to make quickelement agnostic about state management etc
+  - added `add_setup` method, which make it easy to create setups/setdowns
+  - added overridable `init() {}` method, runs in constructor
+- export `Elements` type
+- export `attributes` addon for base elements
 - add `apply_styles_to_shadow`
 
 ## v0.2.0 – 2023-07-22

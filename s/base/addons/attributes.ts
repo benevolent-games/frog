@@ -2,12 +2,11 @@
 import {BaseElement} from "../../base/element.js"
 
 type AnyAttrs = {[key: string]: string}
+type AttrsFor<A extends AnyAttrs, V> = {[P in keyof A]: V}
 
 export function attributes<A extends AnyAttrs>(element: BaseElement) {
 	const observer = new MutationObserver(() => element.requestUpdate())
 	observer.observe(element, {attributes: true})
-
-	type AttrsFor<T> = {[P in keyof A]: T}
 
 	function low_level_attribute_proxy<V>({read, write}: {
 			read: (name: string) => V | void
@@ -19,7 +18,7 @@ export function attributes<A extends AnyAttrs>(element: BaseElement) {
 				write(name, value)
 				return true
 			},
-		}) as AttrsFor<V>
+		}) as AttrsFor<A, V>
 	}
 
 	function simple_attribute_conversion_proxy<V>({to, from}: {
@@ -39,7 +38,7 @@ export function attributes<A extends AnyAttrs>(element: BaseElement) {
 				else
 					element.setAttribute(name, to(value))
 			},
-		}) as AttrsFor<V>
+		}) as AttrsFor<A, V>
 	}
 
 	return {

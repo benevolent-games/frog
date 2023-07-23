@@ -15,8 +15,9 @@ export const DemoView = flatview({strict: true})
 	}))
 
 	.setup(({actions}) => {
-		const interval = setInterval(actions.increment, 1000)
-		return () => clearInterval(interval)
+		// const interval = setInterval(actions.increment, 1000)
+		// return () => clearInterval(interval)
+		return () => {}
 	})
 
 	.render(({state, actions}) => (greeting: string) => html`

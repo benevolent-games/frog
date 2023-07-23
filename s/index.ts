@@ -1,11 +1,15 @@
 
 export * from "./base/element.js"
+
+export * from "./base/addons/attributes.js"
+
 export * from "./base/helpers/flatstate_reactivity.js"
 export * from "./base/helpers/provide_context.js"
 export * from "./base/helpers/register_to_dom.js"
 export * from "./base/helpers/apply_theme.js"
 export * from "./base/helpers/cue_reactivity.js"
 export * from "./base/helpers/snap_reactivity.js"
+
 export * from "./base/mixins/css.js"
 export * from "./base/mixins/cues.js"
 export * from "./base/mixins/flatstate.js"
@@ -13,6 +17,7 @@ export * from "./base/mixins/snap.js"
 
 export * from "./base/utils/apply_styles_to_shadow.js"
 export * from "./base/utils/finalize_styles.js"
+export * from "./base/utils/types.js"
 
 export * from "./cues/cue.js"
 export * from "./cues/group.js"
