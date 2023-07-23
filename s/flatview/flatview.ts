@@ -17,21 +17,7 @@ export type FlatviewOptions = {
 	strict?: boolean
 }
 
-export type Flatview<P extends any[]> = {
-	(...props: P): TemplateResult<any> | void
-	add_css(css: CSSResultGroup): void
-}
-
-export type FlatviewDeferredFlat<P extends any[]> = (flat: Flat) => Flatview<P>
-export type FlatviewDeferredCss<P extends any[]> = (...css: CSSResultArray) => Flatview<P>
-
-export type FlatviewGroup = {
-	[key: string]: Flatview<any>
-}
-
-export type UnwrapDeferredFlatviewGroup<F extends {[key: string]: (...args: any[]) => Flatview<any>}> = {
-	[P in keyof F]: ReturnType<F[P]>
-}
+export type Flatview<P extends any[]> = (...props: P) => TemplateResult | void
 
 export type FlatviewSetup<S extends {}, A extends {}> = (context: FlatviewContext<S, A>) => () => void
 
@@ -129,19 +115,17 @@ function final<S extends {}, A extends {}, P extends any[]>({
 	}) as Flatview<P>
 }
 
-export function flatview(options: FlatviewOptions = {}) {
-	return {
-		state: <S extends {}>(initstate: S = {} as any) => ({
-			actions: <A extends {}>(initactions: (state: S) => A = () => ({} as any)) => ({
-				setup: (setup: FlatviewSetup<S, A> = () => () => {}) => ({
-					render: <P extends any[]>(renderer: FlatviewRenderer<S, A, P>) => ({
-						css: (...css: CSSResultArray) => (
-							final<S, A, P>({...options, initstate, initactions, setup, renderer, css})
-						)
-					})
+export const flatview = (options: FlatviewOptions = {}) => ({
+	state: <S extends {}>(initstate: S = {} as any) => ({
+		actions: <A extends {}>(initactions: (state: S) => A = () => ({} as any)) => ({
+			setup: (setup: FlatviewSetup<S, A> = () => () => {}) => ({
+				render: <P extends any[]>(renderer: FlatviewRenderer<S, A, P>) => ({
+					css: (...css: CSSResultArray) => (
+						final<S, A, P>({...options, initstate, initactions, setup, renderer, css})
+					)
 				})
 			})
 		})
-	}
-}
+	})
+})
 

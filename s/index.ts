@@ -31,5 +31,5 @@ export * from "./tools/op.js"
 export * from "./tools/pipe.js"
 export * from "./tools/pub.js"
 
-export * from "./view/flatview.js"
+export * from "./flatview/flatview.js"
 
