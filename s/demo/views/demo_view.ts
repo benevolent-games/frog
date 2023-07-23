@@ -1,9 +1,18 @@
 
-import {html} from "lit"
-import {flatview} from "../../view/flatview.js"
-import {Flat} from "../../flatstate/flat.js"
+import {css, html} from "lit"
 
-export const DemoView = flatview({flat: new Flat(), shadow: false, strict: true})
+import {theme} from "../theme.js"
+import {Flat} from "../../flatstate/flat.js"
+import {flatview} from "../../view/flatview.js"
+
+export const PlainView = flatview()
+	.state()
+	.actions()
+	.setup()
+	.render(() => () => html``)
+	.css()
+
+export const DemoView = flatview({flat: new Flat(), strict: true})
 	.state({count: 0})
 	.actions(state => ({
 		increment() {
@@ -19,5 +28,12 @@ export const DemoView = flatview({flat: new Flat(), shadow: false, strict: true}
 		<p>count: ${state.count}</p>
 		<button @click=${actions.increment}>increment</button>
 	`)
-	.css()
+	.css(theme, css`
+		:host {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			gap: 0.5em;
+		}
+	`)
 

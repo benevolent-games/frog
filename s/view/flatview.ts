@@ -1,10 +1,10 @@
 
 import {directive} from "lit/directive.js"
-import {obtool} from "@chasemoskal/magical"
-import {CSSResultGroup, TemplateResult} from "lit"
 import {AsyncDirective} from "lit/async-directive.js"
+import {CSSResultArray, CSSResultGroup, Part, TemplateResult, adoptStyles, render} from "lit"
 
 import {Flat} from "../flatstate/flat.js"
+import {finalize_styles} from "../base/utils/finalize_styles.js"
 
 export type FlatviewContext<S extends {}, A extends {}> = {state: S, actions: A}
 
@@ -13,18 +13,23 @@ export type FlatviewRenderer<S extends {}, A extends {}, P extends any[]> = (
 )
 
 export type FlatviewOptions = {
-	flat: Flat
-	shadow: boolean
-	strict: boolean
+	flat?: Flat
+	strict?: boolean
 }
 
-export type Flatview<P extends any[]> = (...props: P) => TemplateResult<any> | void
-
-export type DeferredFlatviewGroup = {
-	[key: string]: (flat: Flat) => Flatview<any>
+export type Flatview<P extends any[]> = {
+	(...props: P): TemplateResult<any> | void
+	add_css(css: CSSResultGroup): void
 }
 
-export type UnwrapDeferredFlatviewGroup<F extends DeferredFlatviewGroup> = {
+export type FlatviewDeferredFlat<P extends any[]> = (flat: Flat) => Flatview<P>
+export type FlatviewDeferredCss<P extends any[]> = (...css: CSSResultArray) => Flatview<P>
+
+export type FlatviewGroup = {
+	[key: string]: Flatview<any>
+}
+
+export type UnwrapDeferredFlatviewGroup<F extends {[key: string]: (...args: any[]) => Flatview<any>}> = {
 	[P in keyof F]: ReturnType<F[P]>
 }
 
@@ -36,7 +41,8 @@ function final<S extends {}, A extends {}, P extends any[]>({
 		renderer,
 		initstate,
 		initactions,
-		...options
+		flat = new Flat(),
+		strict = false,
 	}: FlatviewOptions & {
 		initstate: S
 		initactions: (s: S) => A
@@ -45,22 +51,43 @@ function final<S extends {}, A extends {}, P extends any[]>({
 		css?: CSSResultGroup
 	}) {
 
-	const state = options.flat.state(initstate)
+	const state = flat.state(initstate)
 	const actions = initactions(state)
 
 	const o = {
 		actions,
-		state: options.strict
+		state: strict
 			? Flat.readonly(state)
 			: state,
 	}
 
-	const render = renderer(o)
+	const realize = renderer(o)
+
+	const root = (() => {
+		const container = document.createElement("span")
+		const shadow = container.attachShadow({mode: "open"})
+
+		const styles = finalize_styles(css)
+		adoptStyles(shadow, styles)
+
+		return {
+			container,
+			shadow,
+			render(content: TemplateResult | void) {
+				render(content, shadow)
+				return container
+			},
+		}
+	})()
 
 	return directive(class extends AsyncDirective {
 		#recent_props?: P
 		#unsetup?: void | (() => void)
 		#stop?: () => void
+
+		update(_: Part, props: P) {
+			return root.render(this.render(...props))
+		}
 
 		render(...props: P) {
 			if (!this.#unsetup)
@@ -73,15 +100,15 @@ function final<S extends {}, A extends {}, P extends any[]>({
 
 			let result: TemplateResult | void = undefined
 
-			this.#stop = options.flat.manual({
+			this.#stop = flat.manual({
 				debounce: true,
 				discover: false,
 				collector: () => {
-					result = render(...props)
+					result = realize(...props)
 				},
 				responder: () => {
 					this.setValue(
-						this.render(...this.#recent_props!)
+						root.render(this.render(...this.#recent_props!))
 					)
 				},
 			})
@@ -102,13 +129,13 @@ function final<S extends {}, A extends {}, P extends any[]>({
 	}) as Flatview<P>
 }
 
-export function flatview(options: FlatviewOptions) {
+export function flatview(options: FlatviewOptions = {}) {
 	return {
-		state: <S extends {}>(initstate: S) => ({
-			actions: <A extends {}>(initactions: (state: S) => A) => ({
-				setup: (setup: FlatviewSetup<S, A>) => ({
+		state: <S extends {}>(initstate: S = {} as any) => ({
+			actions: <A extends {}>(initactions: (state: S) => A = () => ({} as any)) => ({
+				setup: (setup: FlatviewSetup<S, A> = () => () => {}) => ({
 					render: <P extends any[]>(renderer: FlatviewRenderer<S, A, P>) => ({
-						css: (css?: CSSResultGroup) => (
+						css: (...css: CSSResultArray) => (
 							final<S, A, P>({...options, initstate, initactions, setup, renderer, css})
 						)
 					})
@@ -116,12 +143,5 @@ export function flatview(options: FlatviewOptions) {
 			})
 		})
 	}
-}
-
-flatview.provide = function<F extends DeferredFlatviewGroup>(flat: Flat) {
-	return (group: F) => (
-		obtool(group)
-			.map(view => view(flat)) as UnwrapDeferredFlatviewGroup<F>
-	)
 }
 

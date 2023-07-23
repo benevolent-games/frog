@@ -1,6 +1,5 @@
 
-import {css} from "lit"
-
+import {theme} from "./theme.js"
 import {Context} from "./context.js"
 import {Pipe} from "../tools/pipe.js"
 import {FlatViewer} from "./components/flat-viewer.js"
@@ -23,15 +22,7 @@ export const elements = {
 	FlatViewer,
 }
 
-export const default_theme = css`
-	* {
-		margin: 0;
-		padding: 0;
-		box-sizing: border-box;
-	}
-`
-
-export function prepare_components(context: Context, theme = default_theme) {
+export function prepare_components(context: Context) {
 	return Pipe.with(elements)
 		.to(provide_context(context))
 		.to(cue_reactivity(context.cues))
