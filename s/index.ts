@@ -17,7 +17,7 @@ export * from "./cues/group.js"
 export * from "./cues/parts/listener.js"
 export * from "./cues/parts/circular_error.js"
 
-export * from "./flatstate/flatstate.js"
+export * from "./flatstate/flat.js"
 export * from "./flatstate/parts/errors.js"
 
 export * from "./quick/element.js"
@@ -30,4 +30,7 @@ export * from "./tools/obtool.js"
 export * from "./tools/op.js"
 export * from "./tools/pipe.js"
 export * from "./tools/pub.js"
+export * from "./tools/requirement.js"
+
+export * from "./flatview/flatview.js"
 

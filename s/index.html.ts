@@ -22,6 +22,7 @@ export default template(async basics => {
 					<app-counter-button></app-counter-button>
 					<flat-counter></flat-counter>
 					<flat-nesting></flat-nesting>
+					<flat-viewer></flat-viewer>
 				</div>
 			</div>
 		`,

@@ -21,9 +21,9 @@ flatstate is inspired by mobx and snapstate, but designed to be really simple: f
 
 - create a flatstate tracking context
   ```ts
-  import {Flatstate} from "@benev/frog"
+  import {Flat} from "@benev/frog"
 
-  const flat = new Flatstate()
+  const flat = new Flat()
   ```
 - make a flat state object
   ```ts
@@ -45,7 +45,7 @@ flatstate is inspired by mobx and snapstate, but designed to be really simple: f
 
 - reactions are debounced -- so you may have to wait to see state changes
   ```ts
-  const flat = new Flatstate()
+  const flat = new Flat()
   const state = flat.state({amount: 100})
 
   state.amount = 101
@@ -86,7 +86,7 @@ flatstate is inspired by mobx and snapstate, but designed to be really simple: f
   - flatstate calls the responder whenever that data changes
 - there's also this helper called "collectivize" if you prefer the syntax sugar:
   ```ts
-  const c = Flatstate.collectivize(state)
+  const c = Flat.collectivize(state)
 
   flat.reaction(
     c(({count}) => ({count})),
@@ -108,13 +108,13 @@ flatstate is inspired by mobx and snapstate, but designed to be really simple: f
 
 - multiple flatstate instances are totally isolated from each other
   ```ts
-  const flat1 = new Flatstate()
-  const flat2 = new Flatstate()
+  const flat1 = new Flat()
+  const flat2 = new Flat()
   ```
 - create readonly access to a state object
   ```ts
   const state = flat.state({count: 0})
-  const rstate = Flatstate.readonly(state)
+  const rstate = Flat.readonly(state)
 
   state.count = 1
   await flat.wait
