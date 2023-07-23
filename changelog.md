@@ -1,4 +1,6 @@
 
+- add `apply_styles_to_shadow`
+
 ## v0.2.0 – 2023-07-22
 
 - (!) rename `Flatstate` to `Flat`

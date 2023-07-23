@@ -10,6 +10,8 @@ export * from "./base/mixins/css.js"
 export * from "./base/mixins/cues.js"
 export * from "./base/mixins/flatstate.js"
 export * from "./base/mixins/snap.js"
+
+export * from "./base/utils/apply_styles_to_shadow.js"
 export * from "./base/utils/finalize_styles.js"
 
 export * from "./cues/cue.js"

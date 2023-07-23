@@ -1,11 +1,11 @@
 
-import {TemplateResult, adoptStyles, render} from "lit"
+import {CSSResultGroup, TemplateResult, render} from "lit"
 
 import {debounce} from "../tools/debounce.js"
 import {BaseElement} from "../base/element.js"
 import {attributes} from "../base/utils/attributes.js"
 import {explode_promise} from "../tools/explode_promise.js"
-import {finalize_styles} from "../base/utils/finalize_styles.js"
+import {apply_styles_to_shadow} from "../base/utils/apply_styles_to_shadow.js"
 import {cue_facility_for_element} from "../base/utils/cue_facility_for_element.js"
 
 export class QuickElement extends HTMLElement implements BaseElement {
@@ -14,11 +14,12 @@ export class QuickElement extends HTMLElement implements BaseElement {
 	#cue_facility = cue_facility_for_element(this)
 	#update_promise_initial = explode_promise<void>()
 
+	static styles?: CSSResultGroup
+
 	constructor() {
 		super()
 		this.#root = this.attachShadow({mode: "open"})
-		const styles = finalize_styles((this.constructor as any).styles)
-		adoptStyles(this.#root, styles)
+		apply_styles_to_shadow(this.#root, (this.constructor as typeof QuickElement).styles)
 	}
 
 	readonly attr = attributes(this)

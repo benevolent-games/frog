@@ -1,13 +1,11 @@
 
-import {finalize_styles} from "../../base/utils/finalize_styles.js"
-import {CSSResultGroup, TemplateResult, adoptStyles, render} from "lit"
+import {CSSResultGroup, TemplateResult, render} from "lit"
+import {apply_styles_to_shadow} from "../../base/utils/apply_styles_to_shadow.js"
 
 export function make_view_root(css: CSSResultGroup | undefined) {
 	const container = document.createElement("span")
 	const shadow = container.attachShadow({mode: "open"})
-
-	const styles = finalize_styles(css)
-	adoptStyles(shadow, styles)
+	apply_styles_to_shadow(shadow, css)
 
 	return {
 		container,
