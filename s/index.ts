@@ -30,6 +30,7 @@ export * from "./tools/obtool.js"
 export * from "./tools/op.js"
 export * from "./tools/pipe.js"
 export * from "./tools/pub.js"
+export * from "./tools/requirement.js"
 
 export * from "./flatview/flatview.js"
 
