@@ -1,4 +1,10 @@
 
+## v0.2.0 – 2023-07-22
+
+- (!) rename `Flatstate` to `Flat`
+- add `flatview`
+- add `requirement` tool
+
 ## v0.1.0 – 2023-07-19
 
 - (!) rework and rename all the base element helpers
