@@ -6,10 +6,10 @@ import {FlatviewOptions, FlatviewRenderer, FlatviewSetup} from "./parts/types.js
 
 export * from "./parts/types.js"
 
-export const flatview = ({
-		flat = new Flat(),
-		strict = true,
-	}: FlatviewOptions = {}) => ({
+export const flatview = (
+		flat: Flat = new Flat(),
+		{strict = true}: FlatviewOptions = {},
+	) => ({
 
 	state: <S extends {}>(initstate: S = {} as any) => ({
 

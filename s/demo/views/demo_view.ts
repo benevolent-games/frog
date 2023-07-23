@@ -4,7 +4,7 @@ import {css, html} from "lit"
 import {theme} from "../theme.js"
 import {flatview} from "../../flatview/flatview.js"
 
-export const DemoView = flatview({strict: true})
+export const DemoView = flatview()
 
 	.state({count: 0})
 
@@ -15,9 +15,8 @@ export const DemoView = flatview({strict: true})
 	}))
 
 	.setup(({actions}) => {
-		// const interval = setInterval(actions.increment, 1000)
-		// return () => clearInterval(interval)
-		return () => {}
+		const interval = setInterval(actions.increment, 1000)
+		return () => clearInterval(interval)
 	})
 
 	.render(({state, actions}) => (greeting: string) => html`

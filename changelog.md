@@ -1,6 +1,8 @@
 
-- (!) flatview strict is now true by default (was false)
-- (!) gut `QuickElement`
+- (!) flatview signature changes
+  - `flat` now comes first, like `flatview(flat, {strict: true})`
+  - `strict` is now `true` by default (was false)
+- (!) gutted `QuickElement`
   - cues ripped out of QuickElement
   - attributes addon ripped out QuickElement
   - goal is to make quickelement agnostic about state management etc

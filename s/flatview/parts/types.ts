@@ -1,13 +1,11 @@
 
 import {TemplateResult} from "lit"
-import {Flat} from "../../flatstate/flat.js"
 
 export type Flatview<P extends any[]> = (
 	(...props: P) => TemplateResult | void
 )
 
 export type FlatviewOptions = {
-	flat?: Flat
 	strict?: boolean
 }
 
