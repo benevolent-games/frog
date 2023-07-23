@@ -5,17 +5,19 @@ import {make_view_root} from "./root.js"
 import {Flat} from "../../flatstate/flat.js"
 import {make_view_context} from "./context.js"
 import {AsyncDirective, directive} from "lit/async-directive.js"
-import {Flatview, FlatviewOptions, FlatviewRenderer, FlatviewSetup} from "./types.js"
+import {Flatview, FlatviewRenderer, FlatviewSetup} from "./types.js"
 
 export function make_view_directive<S extends {}, A extends {}, P extends any[]>({
+		flat,
+		strict,
 		css,
 		setup,
 		renderer,
 		initstate,
 		initactions,
-		flat = new Flat(),
-		strict = false,
-	}: FlatviewOptions & {
+	}: {
+		flat: Flat
+		strict: boolean
 		initstate: S
 		initactions: (s: S) => A
 		setup: FlatviewSetup<S, A>

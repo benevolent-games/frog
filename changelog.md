@@ -1,4 +1,5 @@
 
+- (!) flatview strict is now true by default (was false)
 - (!) gut `QuickElement`
   - cues ripped out of QuickElement
   - attributes addon ripped out QuickElement
