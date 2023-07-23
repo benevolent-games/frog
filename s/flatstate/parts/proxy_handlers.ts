@@ -43,9 +43,9 @@ export function proxy_handlers(
 				throw new CircularFlatstateError(key)
 
 			state[key] = value
-			const entries = tracker.grab_keymap(state).grab_symbolmap(key)
+			const reactions = [...tracker.grab_keymap(state).grab_symbolmap(key)]
 
-			for (const entry of entries) {
+			for (const entry of reactions) {
 				const [symbol, reaction] = entry
 
 				if (reaction.debounce)

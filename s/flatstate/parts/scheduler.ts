@@ -7,7 +7,7 @@ export class Scheduler {
 
 	#actuate = debounce(0, () => {
 		const functions = [...this.#queue.values()]
-		this.#queue = new Map()
+		this.#queue.clear()
 		for (const fun of functions)
 			fun()
 	})

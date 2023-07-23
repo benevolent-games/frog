@@ -370,5 +370,22 @@ export default <Suite>{
 		expect(inner_called).equals(true)
 	},
 
+	async "discovery without debounce"() {
+		const flat = new Flat()
+		const state = flat.state({count: 0})
+		let calls = 0
+		flat.manual({
+			discover: true,
+			debounce: false,
+			collector: () => { void state.count },
+			responder: () => {
+				if (calls++ > 10)
+					throw new Error("loop")
+			},
+		})
+		state.count++
+		await flat.wait
+	},
+
 }
 
