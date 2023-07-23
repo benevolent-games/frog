@@ -1,4 +1,6 @@
 
+## v0.3.0 – 2023-07-23
+
 - (!) flatview signature changes
   - `flat` now comes first, like `flatview(flat, {strict: true})`
   - `strict` is now `true` by default (was false)
