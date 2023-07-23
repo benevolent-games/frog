@@ -36,7 +36,7 @@
 		"importly": "^0.2.0",
 		"npm-run-all": "^4.1.5",
 		"rollup": "^3.26.3",
-		"terser": "^5.19.1",
+		"terser": "^5.19.2",
 		"typescript": "^5.1.6"
 	},
 	"keywords": [
