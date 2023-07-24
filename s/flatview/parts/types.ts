@@ -2,17 +2,21 @@
 import {TemplateResult} from "lit"
 
 export type Flatview<P extends any[]> = (
-	(input: FlatviewInput<P>) => TemplateResult | void
+	(details?: FlatviewDetails) => (...props: P) => TemplateResult | void
 )
 
 export type FlatviewOptions = {
 	strict?: boolean
 }
 
-export type FlatviewInput<P extends any[]> = {
-	props: P
+export type FlatviewDetails = {
 	part?: string
 	exportparts?: string
+}
+
+export type FlatviewInput<P extends any[]> = {
+	props: P
+	details: FlatviewDetails
 }
 
 export type FlatviewSetup<S extends {}, A extends {}> = (

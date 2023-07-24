@@ -4,17 +4,9 @@ import {CSSResultGroup, Part, TemplateResult} from "lit"
 import {make_view_root} from "./root.js"
 import {Flat} from "../../flatstate/flat.js"
 import {make_view_context} from "./context.js"
-import {AsyncDirective, DirectiveClass, DirectiveParameters, DirectiveResult, directive} from "lit/async-directive.js"
+import {AsyncDirective} from "lit/async-directive.js"
 import {Flatview, FlatviewInput, FlatviewRenderer, FlatviewSetup} from "./types.js"
-
-export const directive2 = (
-	<C extends DirectiveClass>(c: C) => (
-		(...values: DirectiveParameters<InstanceType<C>>): DirectiveResult<C> => ({
-			['_$litDirective$']: c,
-			values,
-		})
-	)
-)
+import {custom_directive_with_detail_input} from "./custom_directive_with_detail_input.js"
 
 export function make_view_directive<S extends {}, A extends {}, P extends any[]>({
 		flat,
@@ -34,7 +26,7 @@ export function make_view_directive<S extends {}, A extends {}, P extends any[]>
 		css?: CSSResultGroup
 	}) {
 
-	return directive(class extends AsyncDirective {
+	return custom_directive_with_detail_input(class extends AsyncDirective {
 		#root = make_view_root(css)
 		#context = make_view_context({flat, strict, initstate, initactions})
 		#render_content = renderer(this.#context)
@@ -49,8 +41,8 @@ export function make_view_directive<S extends {}, A extends {}, P extends any[]>
 
 		render(input: FlatviewInput<P>) {
 			this.#recent_input = input
-			this.#root.container.setAttribute("part", input.part ?? "")
-			this.#root.container.setAttribute("exportparts", input.exportparts ?? "")
+			this.#root.container.setAttribute("part", input.details.part ?? "")
+			this.#root.container.setAttribute("exportparts", input.details.exportparts ?? "")
 
 			if (!this.#unsetup)
 				this.#unsetup = setup(this.#context)
