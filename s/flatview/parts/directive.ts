@@ -4,8 +4,17 @@ import {CSSResultGroup, Part, TemplateResult} from "lit"
 import {make_view_root} from "./root.js"
 import {Flat} from "../../flatstate/flat.js"
 import {make_view_context} from "./context.js"
-import {AsyncDirective, directive} from "lit/async-directive.js"
-import {Flatview, FlatviewRenderer, FlatviewSetup} from "./types.js"
+import {AsyncDirective, DirectiveClass, DirectiveParameters, DirectiveResult, directive} from "lit/async-directive.js"
+import {Flatview, FlatviewInput, FlatviewRenderer, FlatviewSetup} from "./types.js"
+
+export const directive2 = (
+	<C extends DirectiveClass>(c: C) => (
+		(...values: DirectiveParameters<InstanceType<C>>): DirectiveResult<C> => ({
+			['_$litDirective$']: c,
+			values,
+		})
+	)
+)
 
 export function make_view_directive<S extends {}, A extends {}, P extends any[]>({
 		flat,
@@ -30,16 +39,18 @@ export function make_view_directive<S extends {}, A extends {}, P extends any[]>
 		#context = make_view_context({flat, strict, initstate, initactions})
 		#render_content = renderer(this.#context)
 
-		#recent_props?: P
+		#recent_input!: FlatviewInput<P>
 		#unsetup?: void | (() => void)
 		#stop?: () => void
 
-		update(_: Part, props: P) {
+		update(_: Part, props: [FlatviewInput<P>]) {
 			return this.#root.render_into_shadow(this.render(...props))
 		}
 
-		render(...props: P) {
-			this.#recent_props = props
+		render(input: FlatviewInput<P>) {
+			this.#recent_input = input
+			this.#root.container.setAttribute("part", input.part ?? "")
+			this.#root.container.setAttribute("exportparts", input.exportparts ?? "")
 
 			if (!this.#unsetup)
 				this.#unsetup = setup(this.#context)
@@ -53,12 +64,12 @@ export function make_view_directive<S extends {}, A extends {}, P extends any[]>
 				debounce: true,
 				discover: false,
 				collector: () => {
-					result = this.#render_content(...props)
+					result = this.#render_content(...input.props)
 				},
 				responder: () => {
 					this.setValue(
 						this.#root.render_into_shadow(
-							this.render(...this.#recent_props!)
+							this.render(this.#recent_input)
 						)
 					)
 				},
