@@ -1,4 +1,10 @@
 
+- (!) flatview usage syntax changed:
+  - used to be like `DemoView("hello")`
+  - is now like `DemoView()("hello")`
+  - you can pass exportparts and part into the first parens
+  - like this `DemoView({part: "button", exportparts: "a"})("hello")`
+
 ## v0.3.0 – 2023-07-23
 
 - (!) flatview signature changes
