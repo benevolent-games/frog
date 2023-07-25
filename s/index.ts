@@ -27,6 +27,11 @@ export * from "./cues/parts/circular_error.js"
 export * from "./flatstate/flat.js"
 export * from "./flatstate/parts/errors.js"
 
+export * from "./flatview/flatview.js"
+
+export * from "./op/op.js"
+export * from "./op/render_op.js"
+
 export * from "./quick/element.js"
 
 export * from "./tools/debounce.js"
@@ -34,10 +39,7 @@ export * from "./tools/explode_promise.js"
 export * from "./tools/maptool.js"
 export * from "./tools/nap.js"
 export * from "./tools/obtool.js"
-export * from "./tools/op.js"
 export * from "./tools/pipe.js"
 export * from "./tools/pub.js"
 export * from "./tools/requirement.js"
-
-export * from "./flatview/flatview.js"
 
