@@ -1,12 +1,16 @@
 
-- (!) flatview usage syntax changed:
-  - used to be like `DemoView("hello")`
-  - is now like `DemoView()("hello")`
-  - you can pass exportparts and part into the first parens
-  - like this `DemoView({part: "button", exportparts: "a"})("hello")`
-- (!) rename stuff in Op
-  - `err` renamed to `error`
-  - `Op.Any<any>` renamed to `Op.For<any>`
+- flatview
+  - (!) flatview usage syntax changed:
+    - used to be like `DemoView("hello")`
+    - is now like `DemoView()("hello")`
+    - you can pass exportparts and part into the first parens
+    - like this `DemoView({part: "button", exportparts: "a"})("hello")`
+  - (!) add `tag` option to flatview
+    - default is now `div` (was `span`)
+- op
+  - (!) rename stuff in Op
+    - `err` renamed to `error`
+    - `Op.Any<any>` renamed to `Op.For<any>`
 
 ## v0.3.0 – 2023-07-23
 

@@ -10,6 +10,7 @@ import {Flatview, FlatviewInput, FlatviewRenderer, FlatviewSetup} from "./types.
 import {custom_directive_with_detail_input} from "./custom_directive_with_detail_input.js"
 
 export function make_view_directive<S extends {}, A extends {}, P extends any[]>({
+		tag,
 		flat,
 		strict,
 		css,
@@ -18,17 +19,18 @@ export function make_view_directive<S extends {}, A extends {}, P extends any[]>
 		initstate,
 		initactions,
 	}: {
+		tag: string
 		flat: Flat
 		strict: boolean
 		initstate: S
 		initactions: (s: S) => A
 		setup: FlatviewSetup<S, A>
 		renderer: FlatviewRenderer<S, A, P>
-		css?: CSSResultGroup
+		css: CSSResultGroup | undefined
 	}) {
 
 	return custom_directive_with_detail_input(class extends AsyncDirective {
-		#root = make_view_root(css)
+		#root = make_view_root(tag, css)
 		#context = make_view_context({flat, strict, initstate, initactions})
 		#render_content = renderer(this.#context)
 
