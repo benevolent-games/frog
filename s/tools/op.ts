@@ -1,24 +1,26 @@
 
+const JsError = Error
+
 export namespace Op {
-	export type Mode = "loading" | "err" | "ready"
+	export type Mode = "loading" | "error" | "ready"
 	export type Loading = {mode: "loading"}
-	export type Err = {mode: "err", reason: string}
+	export type Error = {mode: "error", reason: string}
 	export type Ready<X> = {mode: "ready", payload: X}
 
-	export type Any<X> = Loading | Err | Ready<X>
-	export type Setter<X> = (op: Any<X>) => void
+	export type For<X> = Loading | Error | Ready<X>
+	export type Setter<X> = (op: For<X>) => void
 
 	export const loading = (): Loading => ({mode: "loading"})
-	export const err = (reason: string): Err => ({mode: "err", reason})
+	export const error = (reason: string): Error => ({mode: "error", reason})
 	export const ready = <X>(payload: X): Ready<X> => ({mode: "ready", payload})
 
 	export const is = Object.freeze({
-		loading: (op: Any<any>) => op.mode === "loading",
-		err: (op: Any<any>) => op.mode === "err",
-		ready: (op: Any<any>) => op.mode === "ready",
+		loading: (op: For<any>) => op.mode === "loading",
+		error: (op: For<any>) => op.mode === "error",
+		ready: (op: For<any>) => op.mode === "ready",
 	})
 
-	export function payload<X>(op: Any<X>) {
+	export function payload<X>(op: For<X>) {
 		return (op.mode === "ready")
 			? op.payload
 			: undefined
@@ -26,25 +28,25 @@ export namespace Op {
 
 	type Choices<X, R> = {
 		loading: () => R
-		err: (reason: string) => R
+		error: (reason: string) => R
 		ready: (payload: X) => R
 	}
 
-	export function select<X, R>(op: Any<X>, choices: Choices<X, R>) {
+	export function select<X, R>(op: For<X>, choices: Choices<X, R>) {
 		switch (op.mode) {
 
 			case "loading":
 				return choices.loading()
 
-			case "err":
-				return choices.err(op.reason)
+			case "error":
+				return choices.error(op.reason)
 
 			case "ready":
 				return choices.ready(op.payload)
 
 			default:
 				console.error("op", op)
-				throw new Error("invalid op mode")
+				throw new JsError("invalid op mode")
 		}
 	}
 
@@ -55,13 +57,13 @@ export namespace Op {
 			const payload = await fun()
 			set_op(ready(payload))
 		}
-		catch (error) {
-			const reason = (error instanceof Error)
-				? error.message
-				: (typeof error === "string")
-					? error
+		catch (err) {
+			const reason = (err instanceof JsError)
+				? err.message
+				: (typeof err === "string")
+					? err
 					: "error"
-			set_op(err(reason))
+			set_op(error(reason))
 		}
 	}
 }
