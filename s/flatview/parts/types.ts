@@ -10,6 +10,7 @@ export type FlatviewOptions = {
 }
 
 export type FlatviewDetails = {
+	class?: string
 	part?: string
 	exportparts?: string
 }
