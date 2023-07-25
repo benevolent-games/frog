@@ -66,5 +66,13 @@ export namespace Op {
 			set_op(error(reason))
 		}
 	}
+
+	export function morph<A, B>(op: For<A>, transmute: (a: A) => B) {
+		return select<A, For<B>>(op, {
+			loading: () => loading(),
+			error: reason => error(reason),
+			ready: a => ready(transmute(a)),
+		})
+	}
 }
 
