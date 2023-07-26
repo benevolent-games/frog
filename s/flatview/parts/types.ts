@@ -8,6 +8,7 @@ export type Flatview<P extends any[]> = (
 export type FlatviewOptions = {
 	tag?: string
 	strict?: boolean
+	name?: string
 }
 
 export type FlatviewDetails = {

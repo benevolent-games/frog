@@ -8,7 +8,7 @@ export * from "./parts/types.js"
 
 export const flatview = (
 		flat: Flat = new Flat(),
-		{tag = "div", strict = true}: FlatviewOptions = {},
+		{name, tag = "div", strict = true}: FlatviewOptions = {},
 	) => ({
 
 	state: <S extends {}>(initstate: S = {} as any) => ({
@@ -24,6 +24,7 @@ export const flatview = (
 					css: (...css: CSSResultArray) => (
 
 						make_view_directive<S, A, P>({
+							name,
 							tag,
 							flat,
 							strict,

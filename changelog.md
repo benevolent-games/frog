@@ -7,6 +7,8 @@
     - like this `DemoView({part: "button", exportparts: "a"})("hello")`
   - (!) add `tag` option to flatview
     - default is now `div` (was `span`)
+  - add `name` option to flatview
+    - it appears on the element as `data-name`
 - op
   - (!) rename stuff in Op
     - `err` renamed to `error`
