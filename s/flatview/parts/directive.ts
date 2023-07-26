@@ -6,7 +6,7 @@ import {Flat} from "../../flatstate/flat.js"
 import {make_view_context} from "./context.js"
 import {apply_details} from "./apply_details.js"
 import {AsyncDirective} from "lit/async-directive.js"
-import {Flatview, FlatviewInput, FlatviewRenderer, FlatviewSetup} from "./types.js"
+import {Flatview, FlatviewInput, FlatviewRenderer, FlatviewSetup, ShadowableTag} from "./types.js"
 import {custom_directive_with_detail_input} from "./custom_directive_with_detail_input.js"
 
 export function make_view_directive<S extends {}, A extends {}, P extends any[]>({
@@ -21,7 +21,7 @@ export function make_view_directive<S extends {}, A extends {}, P extends any[]>
 		initactions,
 	}: {
 		name: string | undefined
-		tag: string
+		tag: ShadowableTag
 		flat: Flat
 		strict: boolean
 		initstate: S

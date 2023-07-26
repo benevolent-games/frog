@@ -1,12 +1,33 @@
 
 import {TemplateResult} from "lit"
 
+export type ShadowableTag = (
+	| "article"
+	| "aside"
+	| "blockquote"
+	| "body"
+	| "div"
+	| "footer"
+	| "h1"
+	| "h2"
+	| "h3"
+	| "h4"
+	| "h5"
+	| "h6"
+	| "header"
+	| "main"
+	| "nav"
+	| "p"
+	| "section"
+	| "span"
+)
+
 export type Flatview<P extends any[]> = (
 	(details?: FlatviewDetails) => (...props: P) => TemplateResult | void
 )
 
 export type FlatviewOptions = {
-	tag?: string
+	tag?: ShadowableTag
 	strict?: boolean
 	name?: string
 }
