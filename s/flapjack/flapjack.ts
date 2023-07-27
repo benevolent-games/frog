@@ -69,7 +69,7 @@ export function make_hooks(flat: Flat) {
 	}
 }
 
-export function fview<P extends any[]>(flat: Flat, rend: (use: Use) => (...props: P) => TemplateResult | void) {
+export function flapjack<P extends any[]>(flat: Flat, rend: (use: Use) => (...props: P) => TemplateResult | void) {
 	return directive(class extends AsyncDirective {
 		#recent_input!: P
 		#hooks = make_hooks(flat)
