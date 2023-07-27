@@ -21,6 +21,7 @@ export function make_view_root(
 		container,
 		shadow,
 		render_into_shadow(content: TemplateResult | void) {
+			console.log("render into shadow", content, shadow)
 			render(content, shadow)
 			return container
 		},

@@ -67,8 +67,11 @@ export function make_hooks(flat: Flat) {
 				setdowns.delete(id)
 			}
 		},
-		reset() {
-			counter.count = 0
+		wrap<F extends (...args: any[]) => any>(fun: F) {
+			return ((...args: any[]) => {
+				counter.count = 0
+				return fun(...args)
+			}) as F
 		},
 	}
 }
@@ -92,6 +95,7 @@ export function flapjack<P extends any[]>({
 	return custom_directive_with_detail_input(class extends AsyncDirective {
 		#recent_input?: FlatviewInput<P>
 		#hooks = make_hooks(flat)
+		#renderize = this.#hooks.wrap(render)
 		#stop: (() => void) | undefined
 		#root = make_view_root(name, tag, styles)
 
@@ -111,11 +115,14 @@ export function flapjack<P extends any[]>({
 				debounce: true,
 				discover: false,
 				collector: () => {
-					this.#hooks.reset()
-					result = render(this.#hooks.use)(...this.#recent_input!.props)
+					result = this.#renderize(this.#hooks.use)(...this.#recent_input!.props)
 				},
 				responder: () => {
-					this.render(this.#recent_input!)
+					this.setValue(
+						this.#root.render_into_shadow(
+							this.render(this.#recent_input!)
+						)
+					)
 				},
 			})
 
