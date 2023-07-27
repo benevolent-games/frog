@@ -29,6 +29,8 @@ export * from "./flatstate/parts/errors.js"
 
 export * from "./flatview/flatview.js"
 
+export * from "./flapjack/flapjack.js"
+
 export * from "./op/op.js"
 export * from "./op/render_op.js"
 
