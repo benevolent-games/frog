@@ -6,6 +6,7 @@ import {AsyncDirective} from "lit/async-directive.js"
 import {make_view_root} from "../flatview/parts/root.js"
 import {Flatview, FlatviewInput, ShadowableTag} from "../flatview/flatview.js"
 import {custom_directive_with_detail_input} from "../flatview/parts/custom_directive_with_detail_input.js"
+import { apply_details } from "../flatview/parts/apply_details.js"
 
 export class Use {
 	#counter: {count: number}
@@ -104,6 +105,7 @@ export function flapjack<P extends any[]>({
 		}
 
 		render(input: FlatviewInput<P>) {
+			apply_details(this.#root.container, input.details, this.#recent_input?.details)
 			this.#recent_input = input
 
 			if (this.#stop)
