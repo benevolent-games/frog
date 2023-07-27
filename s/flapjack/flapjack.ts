@@ -1,7 +1,11 @@
 
-import {TemplateResult} from "lit"
-import {Flat} from "../flatstate/flat"
-import {AsyncDirective, directive} from "lit/async-directive.js"
+import {CSSResultGroup, Part, TemplateResult} from "lit"
+
+import {Flat} from "../flatstate/flat.js"
+import {AsyncDirective} from "lit/async-directive.js"
+import {make_view_root} from "../flatview/parts/root.js"
+import {Flatview, FlatviewInput, ShadowableTag} from "../flatview/flatview.js"
+import {custom_directive_with_detail_input} from "../flatview/parts/custom_directive_with_detail_input.js"
 
 export class Use {
 	#counter: {count: number}
@@ -69,34 +73,53 @@ export function make_hooks(flat: Flat) {
 	}
 }
 
-export function flapjack<P extends any[]>(flat: Flat, rend: (use: Use) => (...props: P) => TemplateResult | void) {
-	return directive(class extends AsyncDirective {
-		#recent_input!: P
+export type FlapjackOptions<P extends any[]> = {
+	flat: Flat
+	styles: CSSResultGroup
+	tag?: ShadowableTag
+	name?: string
+	render: (use: Use) => (...props: P) => TemplateResult | void
+}
+
+export function flapjack<P extends any[]>({
+		flat,
+		styles,
+		tag = "div",
+		name,
+		render,
+	}: FlapjackOptions<P>) {
+
+	return custom_directive_with_detail_input(class extends AsyncDirective {
+		#recent_input?: FlatviewInput<P>
 		#hooks = make_hooks(flat)
 		#stop: (() => void) | undefined
+		#root = make_view_root(name, tag, styles)
 
-		render(...props: P) {
-			this.#recent_input = props
+		update(_: Part, props: [FlatviewInput<P>]) {
+			return this.#root.render_into_shadow(this.render(...props))
+		}
+
+		render(input: FlatviewInput<P>) {
+			this.#recent_input = input
 
 			if (this.#stop)
 				this.#stop()
 
-			let result: TemplateResult | void
+			let result: TemplateResult | void = undefined
 
 			this.#stop = flat.manual({
 				debounce: true,
 				discover: false,
 				collector: () => {
 					this.#hooks.reset()
-					result = rend(this.#hooks.use)(...props)
+					result = render(this.#hooks.use)(...this.#recent_input!.props)
 				},
 				responder: () => {
-					this.render(...this.#recent_input)
+					this.render(this.#recent_input!)
 				},
 			})
 
-			this.setValue(result!)
-			return result!
+			return result
 		}
 
 		disconnected() {
@@ -106,6 +129,6 @@ export function flapjack<P extends any[]>(flat: Flat, rend: (use: Use) => (...pr
 			}
 			this.#hooks.setdown()
 		}
-	}) as (...props: P) => TemplateResult | void
+	}) as Flatview<P>
 }
 
