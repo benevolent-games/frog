@@ -15,7 +15,7 @@ export class QuickElement extends HTMLElement implements BaseElement {
 
 	#setups = new Set<() => () => void>()
 	#setdowns: (() => void)[] = []
-	add_setup(setup: () => () => void) {
+	setup(setup: () => () => void) {
 		this.#setups.add(setup)
 	}
 
