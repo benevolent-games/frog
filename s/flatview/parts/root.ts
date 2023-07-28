@@ -12,7 +12,7 @@ export function make_view_root(
 	const container = document.createElement(tag)
 
 	if (name)
-		container.setAttribute("data-name", name)
+		container.setAttribute("data-view", name)
 
 	const shadow = container.attachShadow({mode: "open"})
 	apply_styles_to_shadow(shadow, css)

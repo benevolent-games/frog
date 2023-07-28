@@ -8,7 +8,7 @@
   - (!) add `tag` option to flatview
     - default is now `div` (was `span`)
   - add `name` option to flatview
-    - it appears on the element as `data-name`
+    - it appears on the element as `data-view`
 - op
   - (!) rename stuff in Op
     - `err` renamed to `error`
