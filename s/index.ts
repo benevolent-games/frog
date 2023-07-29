@@ -36,6 +36,7 @@ export * from "./op/render_op.js"
 
 export * from "./quick/element.js"
 
+export * from "./tools/clone/clone.js"
 export * from "./tools/debounce.js"
 export * from "./tools/explode_promise.js"
 export * from "./tools/maptool.js"
