@@ -98,5 +98,27 @@ export default <Suite>{
 		expect(JSON.stringify(clonedObject.foo)).equals(JSON.stringify(object.foo))
 		checkMapOrSetEquality(object.map, clonedObject.map)
 	},
+
+	async "clone object with duplicate sibling references"() {
+		const dupeObject = { id: 1, name: "H4CK3RM4N" }
+		const data = { obj1: dupeObject, obj2: dupeObject }
+
+		let didThrow = false
+		let clonedData: typeof data = {} as typeof data
+
+		try {
+			clonedData = clone(data)
+		}
+		catch (error) {
+			didThrow = true
+		}
+
+		expect(didThrow).not.equals(true)
+		expect(clonedData.obj1).not.equals(clonedData.obj2)
+		expect(clonedData.obj1.id).equals(1)
+		expect(clonedData.obj1.name).equals("H4CK3RM4N")
+		expect(clonedData.obj2.id).equals(1)
+		expect(clonedData.obj2.name).equals("H4CK3RM4N")
+	},
 }
 
