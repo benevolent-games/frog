@@ -57,9 +57,9 @@ export function attributes<A extends AnyAttrs>(element: BaseElement) {
 			read: name => element.hasAttribute(name),
 			write: (name, value) => {
 				if (value)
-					element.removeAttribute(name)
-				else
 					element.setAttribute(name, "")
+				else
+					element.removeAttribute(name)
 			},
 		}),
 	}
