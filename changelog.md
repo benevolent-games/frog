@@ -1,4 +1,6 @@
 
+## v0.4.0 - 2023-08-03
+
 - flatview
   - (!) flatview usage syntax changed:
     - used to be like `DemoView("hello")`
@@ -13,6 +15,7 @@
   - (!) rename stuff in Op
     - `err` renamed to `error`
     - `Op.Any<any>` renamed to `Op.For<any>`
+- add flapjack as flatview-alternative
 
 ## v0.3.0 – 2023-07-23
 
