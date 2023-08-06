@@ -4,9 +4,9 @@ import {CSSResultGroup, Part, TemplateResult} from "lit"
 import {Flat} from "../flatstate/flat.js"
 import {AsyncDirective} from "lit/async-directive.js"
 import {make_view_root} from "../flatview/parts/root.js"
+import {apply_details} from "../flatview/parts/apply_details.js"
 import {Flatview, FlatviewInput, ShadowableTag} from "../flatview/flatview.js"
 import {custom_directive_with_detail_input} from "../flatview/parts/custom_directive_with_detail_input.js"
-import { apply_details } from "../flatview/parts/apply_details.js"
 
 export class Use {
 	#counter: {count: number}
