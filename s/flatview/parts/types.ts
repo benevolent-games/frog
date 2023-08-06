@@ -36,6 +36,7 @@ export type FlatviewDetails = {
 	class?: string
 	part?: string
 	exportparts?: string
+	content?: TemplateResult
 }
 
 export type FlatviewInput<P extends any[]> = {
