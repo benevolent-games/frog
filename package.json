@@ -28,7 +28,7 @@
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.5.0",
-		"@rollup/plugin-node-resolve": "^15.1.0",
+		"@rollup/plugin-node-resolve": "^15.2.0",
 		"chokidar": "^3.5.3",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "^0.2.1",
