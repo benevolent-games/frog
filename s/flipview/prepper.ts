@@ -19,7 +19,7 @@ export function flipview_context_prepper<C extends BaseContext>() {
 				flat: context.flat,
 				tag,
 				name,
-				render: render(context),
+				render: (use: Use) => (...props: P) => render(context)(use)(...props),
 				styles: context.theme
 					? [context.theme, ...styles]
 					: styles,
