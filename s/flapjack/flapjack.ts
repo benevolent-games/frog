@@ -2,8 +2,8 @@
 import {CSSResultGroup, Part, TemplateResult} from "lit"
 
 import {Flat} from "../flatstate/flat.js"
+import {make_root} from "./parts/make_root.js"
 import {AsyncDirective} from "lit/async-directive.js"
-import {make_view_root} from "../flatview/parts/root.js"
 import {apply_details} from "../flatview/parts/apply_details.js"
 import {Flatview, FlatviewInput, ShadowableTag} from "../flatview/flatview.js"
 import {custom_directive_with_detail_input} from "../flatview/parts/custom_directive_with_detail_input.js"
@@ -79,6 +79,7 @@ export function make_hooks(flat: Flat) {
 
 export type FlapjackOptions<P extends any[]> = {
 	flat: Flat
+	type?: "shadow" | "light"
 	styles: CSSResultGroup
 	tag?: ShadowableTag
 	name?: string
@@ -87,9 +88,10 @@ export type FlapjackOptions<P extends any[]> = {
 
 export function flapjack<P extends any[]>({
 		flat,
+		name,
 		styles,
 		tag = "div",
-		name,
+		type = "shadow",
 		render,
 	}: FlapjackOptions<P>) {
 
@@ -98,10 +100,10 @@ export function flapjack<P extends any[]>({
 		#hooks = make_hooks(flat)
 		#renderize = this.#hooks.wrap(render)
 		#stop: (() => void) | undefined
-		#root = make_view_root(name, tag, styles)
+		#root = make_root(type, name, tag, styles)
 
 		update(_: Part, props: [FlatviewInput<P>]) {
-			return this.#root.render_into_shadow(this.render(...props))
+			return this.#root.render_into_root(this.render(...props))
 		}
 
 		render(input: FlatviewInput<P>) {
@@ -121,7 +123,7 @@ export function flapjack<P extends any[]>({
 				},
 				responder: () => {
 					this.setValue(
-						this.#root.render_into_shadow(
+						this.#root.render_into_root(
 							this.render(this.#recent_input!)
 						)
 					)

@@ -30,6 +30,7 @@ export * from "./flatstate/parts/errors.js"
 export * from "./flatview/flatview.js"
 
 export * from "./flapjack/flapjack.js"
+export * from "./flapjack/flapjack_prepper.js"
 
 export * from "./op/op.js"
 export * from "./op/prep_render_op.js"

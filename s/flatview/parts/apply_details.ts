@@ -15,7 +15,8 @@ export function apply_details(element: HTMLElement, fresh: FlatviewDetails, old?
 
 	actuate(fresh.class, old?.class, "class", () => fresh.class!)
 	actuate(fresh.part, old?.part, "part", () => fresh.part!)
-	actuate(fresh.exportparts, old?.exportparts, "exportparts", () => fresh.exportparts!)
+	// // TODO WUT DO!?
+	// actuate(fresh.exportparts, old?.exportparts, "exportparts", () => fresh.exportparts!)
 
 	if (fresh.content)
 		render(fresh.content, element, {host: element})
