@@ -7,8 +7,7 @@ import {flipview} from "../../flipview/flipview.js"
 
 export const DemoView = flipview({
 	flat: new Flat(),
-	tag: "div",
-	name: "plain",
+	name: "demo",
 	render: use => (greeting: string) => {
 		const state = use.state({count: 0})
 		const increment = () => state.count++

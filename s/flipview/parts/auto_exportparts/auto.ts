@@ -10,9 +10,9 @@ export function auto_exportparts(
 
 	const attrs = query_attributes(root, {
 		part: "part",
+		gpart: "gpart",
 		exportparts: "exportparts",
-		gpart: "data-gpart",
-		exportgparts: "data-exportgparts",
+		gexportparts: "gexportparts",
 	})
 
 	const parts = new Set<string>([
@@ -22,7 +22,7 @@ export function auto_exportparts(
 
 	const gparts = new Set<string>([
 		...attrs.gpart.flatMap(parse_part),
-		...attrs.exportgparts.flatMap(parse_part),
+		...attrs.gexportparts.flatMap(parse_part),
 	])
 
 	container.setAttribute(
@@ -33,7 +33,7 @@ export function auto_exportparts(
 	)
 
 	container.setAttribute(
-		"data-exportgparts",
+		"gexportparts",
 		[...gparts].join(" "),
 	)
 }

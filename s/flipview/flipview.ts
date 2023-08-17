@@ -11,7 +11,6 @@ import {custom_directive_with_detail_input} from "./parts/custom_directive_with_
 
 export function flipview<P extends any[]>({
 		flat,
-		tag,
 		name,
 		styles,
 		render,
@@ -22,7 +21,7 @@ export function flipview<P extends any[]>({
 		#hooks = hooks(flat)
 		#renderize = this.#hooks.wrap(render)
 		#stop: (() => void) | undefined
-		#root = make_view_root(tag, name, styles, auto_exportparts)
+		#root = make_view_root(name, styles, auto_exportparts)
 
 		update(_: Part, props: [FlipviewInput<P>]) {
 			return this.#root.render_into_shadow(this.render(...props))

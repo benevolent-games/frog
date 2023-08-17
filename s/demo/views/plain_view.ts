@@ -5,7 +5,6 @@ import {flipview} from "../../flipview/flipview.js"
 
 export const PlainView = flipview({
 	flat: new Flat(),
-	tag: "div",
 	name: "plain",
 	styles: [],
 	render: () => () => html``,

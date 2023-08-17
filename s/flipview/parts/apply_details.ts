@@ -28,10 +28,10 @@ export function apply_details(element: HTMLElement, fresh: FlipviewInput<any>, o
 	)
 
 	actuate(
-		fresh.settings["data-gpart"],
-		old?.settings["data-gpart"],
-		"data-gpart",
-		() => fresh.settings["data-gpart"]!,
+		fresh.settings.gpart,
+		old?.settings.gpart,
+		"gpart",
+		() => fresh.settings.gpart!,
 	)
 
 	if (fresh.content)
