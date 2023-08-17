@@ -5,7 +5,7 @@ import {AsyncDirective} from "lit/async-directive.js"
 import {hooks} from "./parts/hooks.js"
 import {make_view_root} from "./parts/root.js"
 import {apply_details} from "./parts/apply_details.js"
-import {auto_export_parts} from "./parts/auto_export_parts.js"
+import {auto_exportparts} from "./parts/auto_exportparts/auto.js"
 import {Flipview, FlipviewInput, FlipviewOptions} from "./parts/types.js"
 import {custom_directive_with_detail_input} from "./parts/custom_directive_with_detail_input.js"
 
@@ -22,7 +22,7 @@ export function flipview<P extends any[]>({
 		#hooks = hooks(flat)
 		#renderize = this.#hooks.wrap(render)
 		#stop: (() => void) | undefined
-		#root = make_view_root(tag, name, styles, auto_export_parts)
+		#root = make_view_root(tag, name, styles, auto_exportparts)
 
 		update(_: Part, props: [FlipviewInput<P>]) {
 			return this.#root.render_into_shadow(this.render(...props))
