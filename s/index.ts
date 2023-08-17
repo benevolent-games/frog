@@ -29,6 +29,7 @@ export * from "./flatstate/parts/errors.js"
 
 export * from "./flipview/flipview.js"
 export * from "./flipview/prepper.js"
+export * from "./flipview/parts/types.js"
 
 export * from "./op/op.js"
 export * from "./op/prep_render_op.js"
