@@ -27,6 +27,7 @@ export type FlipviewOptions<P extends any[]> = {
 	flat: Flat
 	name: string
 	styles: CSSResultGroup
+	auto_exportparts: boolean
 	render: (use: Use) => (...props: P) => TemplateResult | void
 }
 

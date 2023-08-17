@@ -10,7 +10,7 @@ export function auto_exportparts(
 
 	const attrs = query_attributes(root, {
 		part: "part",
-		gpart: "gpart",
+		gpart: "data-gpart",
 		exportparts: "exportparts",
 		gexportparts: "gexportparts",
 	})
@@ -25,16 +25,18 @@ export function auto_exportparts(
 		...attrs.gexportparts.flatMap(parse_part),
 	])
 
-	container.setAttribute(
-		"exportparts",
-		[...prefixes]
-			.flatMap(stitch_exportparts_together(parts, gparts))
-			.join(", "),
-	)
+	if (parts.size)
+		container.setAttribute(
+			"exportparts",
+			[...prefixes]
+				.flatMap(stitch_exportparts_together(parts, gparts))
+				.join(", "),
+		)
 
-	container.setAttribute(
-		"gexportparts",
-		[...gparts].join(" "),
-	)
+	if (gparts.size)
+		container.setAttribute(
+			"gexportparts",
+			[...gparts].join(" "),
+		)
 }
 
