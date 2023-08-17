@@ -1,5 +1,17 @@
 
-import {TemplateResult} from "lit"
+import {CSSResultGroup, TemplateResult} from "lit"
+
+import {Flat} from "../../flatstate/flat.js"
+import {Use} from "../../flipview/parts/use.js"
+
+export type FlipviewOptions<P extends any[]> = {
+	flat: Flat
+	type?: "shadow" | "light"
+	styles: CSSResultGroup
+	tag?: ShadowableTag
+	name?: string
+	render: (use: Use) => (...props: P) => TemplateResult | void
+}
 
 export type ShadowableTag = (
 	| "article"
