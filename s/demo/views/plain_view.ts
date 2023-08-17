@@ -1,11 +1,13 @@
 
 import {html} from "lit"
-import {flatview} from "../../flatview/flatview.js"
+import {Flat} from "../../flatstate/flat.js"
+import {flipview} from "../../flipview/flipview.js"
 
-export const PlainView = flatview()
-	.state()
-	.actions()
-	.setup()
-	.render(() => () => html``)
-	.css()
+export const PlainView = flipview({
+	flat: new Flat(),
+	name: "plain",
+	styles: [],
+	auto_exportparts: true,
+	render: () => () => html``,
+})
 
