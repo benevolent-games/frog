@@ -1,4 +1,11 @@
 
+## v0.5.0 - 2023-08-17
+
+- (!) introducing `flipview`
+  - deleted `flatview`
+  - deleted `flapjack`
+  - flipview is our new view system
+
 ## v0.4.0 - 2023-08-03
 
 - flatview
