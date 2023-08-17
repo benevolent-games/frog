@@ -12,7 +12,7 @@ export const FlatViewer = (_: Context) => class extends QuickElement {
 	render() {
 		return html`
 			<p class=tag>&lt;flat-viewer&gt;</p>
-			${DemoView()("salutations!")}
+			${DemoView()("salutations!")()}
 		`
 	}
 }

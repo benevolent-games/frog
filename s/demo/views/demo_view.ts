@@ -2,35 +2,35 @@
 import {css, html} from "lit"
 
 import {theme} from "../theme.js"
-import {flatview} from "../../flatview/flatview.js"
+import {Flat} from "../../flatstate/flat.js"
+import {flipview} from "../../flipview/flipview.js"
 
-export const DemoView = flatview()
+export const DemoView = flipview({
+	flat: new Flat(),
+	tag: "div",
+	name: "plain",
+	render: use => (greeting: string) => {
+		const state = use.state({count: 0})
+		const increment = () => state.count++
 
-	.state({count: 0})
+		use.setup(() => {
+			const interval = setInterval(increment, 1000)
+			return () => clearInterval(interval)
+		})
 
-	.actions(state => ({
-		increment() {
-			state.count++
-		}
-	}))
-
-	.setup(({actions}) => {
-		const interval = setInterval(actions.increment, 1000)
-		return () => clearInterval(interval)
-	})
-
-	.render(({state, actions}) => (greeting: string) => html`
-		<p>${greeting}</p>
-		<p>count: ${state.count}</p>
-		<button @click=${actions.increment}>increment</button>
-	`)
-
-	.css(theme, css`
+		return html`
+			<p>${greeting}</p>
+			<p>count: ${state.count}</p>
+			<button @click=${increment}>increment</button>
+		`
+	},
+	styles: [theme, css`
 		:host {
 			display: flex;
 			align-items: center;
 			justify-content: flex-start;
 			gap: 0.5em;
 		}
-	`)
+	`],
+})
 
