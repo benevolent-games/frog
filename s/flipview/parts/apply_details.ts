@@ -1,8 +1,8 @@
 
 import {render} from "lit"
-import {FlipviewDetails} from "./types.js"
+import {FlipviewInput} from "./types.js"
 
-export function apply_details(element: HTMLElement, fresh: FlipviewDetails, old?: FlipviewDetails) {
+export function apply_details(element: HTMLElement, fresh: FlipviewInput<any>, old?: FlipviewInput<any>) {
 
 	function actuate<V>(freshvalue: V, oldvalue: V, name: string, value: () => string) {
 		if (freshvalue !== oldvalue) {
@@ -13,8 +13,19 @@ export function apply_details(element: HTMLElement, fresh: FlipviewDetails, old?
 		}
 	}
 
-	actuate(fresh.class, old?.class, "class", () => fresh.class!)
-	actuate(fresh.part, old?.part, "part", () => fresh.part!)
+	actuate(
+		fresh.settings.class,
+		old?.settings.class,
+		"class",
+		() => fresh.settings.class!,
+	)
+
+	actuate(
+		fresh.settings.part,
+		old?.settings.part,
+		"part",
+		() => fresh.settings.part!,
+	)
 
 	if (fresh.content)
 		render(fresh.content, element, {host: element})

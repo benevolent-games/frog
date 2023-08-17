@@ -26,18 +26,21 @@ export type ShadowableTag = (
 )
 
 export type Flipview<P extends any[]> = (
-	(details?: FlipviewDetails) => (...props: P) => TemplateResult | void
+	(settings?: FlipviewSettings) =>
+		(...props: P) =>
+			(content?: TemplateResult) =>
+				TemplateResult | void
 )
 
-export type FlipviewDetails = {
+export type FlipviewSettings = {
 	class?: string
 	part?: string
-	content?: TemplateResult
 }
 
-export type FlatviewInput<P extends any[]> = {
+export type FlipviewInput<P extends any[]> = {
 	props: P
-	details: FlipviewDetails
+	settings: FlipviewSettings
+	content?: TemplateResult
 }
 
 export type FlipviewOptions<P extends any[]> = {
