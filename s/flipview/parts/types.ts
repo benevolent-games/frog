@@ -35,6 +35,7 @@ export type Flipview<P extends any[]> = (
 export type FlipviewSettings = {
 	class?: string
 	part?: string
+	"data-gpart"?: string
 }
 
 export type FlipviewInput<P extends any[]> = {

@@ -2,21 +2,26 @@
 export function auto_export_parts(
 		container: HTMLElement,
 		root: HTMLElement | ShadowRoot,
-		prefix: string | undefined,
 	) {
 
-	const gpart_elements = Array.from(root.querySelectorAll("[data-gparts]"))
+	const prefixes = new Set<string>()
+	{
+		const view_parts = (container.getAttribute("part") ?? "")
+			.split(/\s+/)
+			.map(p => p.trim())
+			.filter(p => !!p)
+		for (const part of view_parts)
+			prefixes.add(part)
+	}
+
 	const part_elements = Array.from(root.querySelectorAll("[part]"))
 	const exportpart_elements = Array.from(root.querySelectorAll("[exportparts]"))
 
+	const gpart_elements = Array.from(root.querySelectorAll("[data-gpart]"))
+	const exportgpart_elements = Array.from(root.querySelectorAll("[data-exportgparts]"))
+
 	const exportparts = new Set<string>()
 	const gparts = new Set<string>()
-
-	for (const element of gpart_elements) {
-		for (const gpart of element.getAttribute("data-gparts")!.split(/\s+/))
-			if (gpart)
-				gparts.add(gpart)
-	}
 
 	for (const element of part_elements) {
 		for (const part of element.getAttribute("part")!.split(/\s+/))
@@ -45,18 +50,43 @@ export function auto_export_parts(
 		}
 	}
 
+	////
+
+	for (const element of gpart_elements) {
+		for (const gpart of element.getAttribute("data-gpart")!.split(/\s+/))
+			if (gpart)
+				gparts.add(gpart)
+	}
+
+	for (const element of exportgpart_elements) {
+		const exports = element.getAttribute("data-exportgparts")!
+			.split(",")
+			.map(r => r.trim())
+			.filter(r => !!r)
+		for (const gpart of exports) {
+			gparts.add(gpart)
+		}
+	}
+
+	////
+
 	const exportparts2: string[] = []
 
 	for (const part of exportparts) {
-		const prefixed_part = prefix
-			? `${part}:${prefix}-${part}`
-			: part
-		exportparts2.push(prefixed_part)
-		if (gparts.has(part))
-			exportparts2.push(part)
+		for (const prefix of prefixes) {
+			const prefixed_part = prefix
+				? `${part}:${prefix}-${part}`
+				: part
+			exportparts2.push(prefixed_part)
+			if (gparts.has(part))
+				exportparts2.push(part)
+		}
 	}
 
-	container.setAttribute("exportparts", exportparts2.join(", "))
-	container.setAttribute("data-gparts", [...gparts].join(" "))
+	if (exportparts2.length)
+		container.setAttribute("exportparts", exportparts2.join(", "))
+
+	if (gparts.size)
+		container.setAttribute("data-exportgparts", [...gparts].join(" "))
 }
 

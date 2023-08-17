@@ -27,6 +27,13 @@ export function apply_details(element: HTMLElement, fresh: FlipviewInput<any>, o
 		() => fresh.settings.part!,
 	)
 
+	actuate(
+		fresh.settings["data-gpart"],
+		old?.settings["data-gpart"],
+		"data-gpart",
+		() => fresh.settings["data-gpart"]!,
+	)
+
 	if (fresh.content)
 		render(fresh.content, element, {host: element})
 }
