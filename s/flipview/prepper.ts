@@ -12,16 +12,16 @@ export type Render<C extends BaseContext, P extends any[]> = (
 )
 
 export type FlippyOptions = {
-	auto_exportparts?: boolean
+	default_auto_exportparts?: boolean
 }
 
 export function flipview_context_prepper<C extends BaseContext>() {
-	return (name: string, {auto_exportparts = true}: FlippyOptions = {}) => ({
+	return (name: string, {default_auto_exportparts = true}: FlippyOptions = {}) => ({
 		render: <P extends any[]>(render: Render<C, P>) => ({
 			styles: (...styles: CSSResultGroup[]) => (context: C) => flipview<P>({
 				flat: context.flat,
 				name,
-				auto_exportparts,
+				default_auto_exportparts,
 				render: (use: Use) => (...props: P) => render(context)(use)(...props),
 				styles: context.theme
 					? [context.theme, ...styles]

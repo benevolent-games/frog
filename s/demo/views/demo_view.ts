@@ -8,7 +8,7 @@ import {flipview} from "../../flipview/flipview.js"
 export const DemoView = flipview({
 	flat: new Flat(),
 	name: "demo",
-	auto_exportparts: true,
+	default_auto_exportparts: true,
 	render: use => (greeting: string) => {
 		const state = use.state({count: 0})
 		const increment = () => state.count++
@@ -21,7 +21,7 @@ export const DemoView = flipview({
 		return html`
 			<p>${greeting}</p>
 			<p>count: ${state.count}</p>
-			<button @click=${increment}>increment</button>
+			<button part=button @click=${increment}>increment</button>
 		`
 	},
 	styles: [theme, css`

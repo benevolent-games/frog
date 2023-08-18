@@ -8,6 +8,7 @@ export type FlipviewSettings = {
 	class?: string
 	part?: string
 	gpart?: string
+	auto_exportparts?: boolean
 }
 
 export type FlipviewData<P extends any[]> = FlipviewSettings & {
@@ -21,7 +22,7 @@ export type FlipviewOptions<P extends any[]> = {
 	flat: Flat
 	name: string
 	styles: CSSResultGroup
-	auto_exportparts: boolean
+	default_auto_exportparts: boolean
 	render: (use: Use) => (...props: P) => TemplateResult | void
 }
 

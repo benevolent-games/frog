@@ -5,7 +5,6 @@ import {AsyncDirective} from "lit/async-directive.js"
 import {hooks} from "./parts/hooks.js"
 import {make_view_root} from "./parts/root.js"
 import {apply_details} from "./parts/apply_details.js"
-import {auto_exportparts} from "./parts/auto_exportparts/auto.js"
 import {Flipview, FlipviewData, FlipviewOptions} from "./parts/types.js"
 import {custom_directive_with_detail_input} from "./parts/custom_directive_with_detail_input.js"
 
@@ -13,7 +12,7 @@ export function flipview<P extends any[]>({
 		flat,
 		name,
 		styles,
-		auto_exportparts: enable_auto_exportparts,
+		default_auto_exportparts,
 		render,
 	}: FlipviewOptions<P>) {
 
@@ -22,14 +21,7 @@ export function flipview<P extends any[]>({
 		#hooks = hooks(flat)
 		#renderize = this.#hooks.wrap(render)
 		#stop: (() => void) | undefined
-
-		#root = make_view_root(
-			name,
-			styles,
-			enable_auto_exportparts
-				? auto_exportparts
-				: () => {}
-		)
+		#root = make_view_root(name, styles)
 
 		update(_: Part, props: [FlipviewData<P>]) {
 			return this.#root.render_into_shadow(this.render(...props))
@@ -38,6 +30,9 @@ export function flipview<P extends any[]>({
 		render(input: FlipviewData<P>) {
 			apply_details(this.#root.container, input, this.#recent_input)
 			this.#recent_input = input
+			this.#root.auto_exportparts = (
+				input.auto_exportparts ?? default_auto_exportparts
+			)
 
 			if (this.#stop)
 				this.#stop()

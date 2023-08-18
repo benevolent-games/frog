@@ -3,12 +3,12 @@ import {dashify} from "@chasemoskal/magical"
 import {CSSResultGroup, TemplateResult, render} from "lit"
 
 import {FlipView} from "./flip-view-element.js"
+import {auto_exportparts} from "./auto_exportparts/auto.js"
 import {apply_styles_to_shadow} from "../../base/utils/apply_styles_to_shadow.js"
 
 export function make_view_root(
 		name: string,
 		css: CSSResultGroup | undefined,
-		on_render: (container: HTMLElement, shadow: ShadowRoot, name: string) => void,
 	) {
 
 	const container = document.createElement(dashify(FlipView.name))
@@ -17,12 +17,22 @@ export function make_view_root(
 	const shadow = container.attachShadow({mode: "open"})
 	apply_styles_to_shadow(shadow, css)
 
+	let auto_exportparts_is_enabled = false
+
 	return {
 		container,
 		shadow,
+
+		set auto_exportparts(enabled: boolean) {
+			auto_exportparts_is_enabled = enabled
+		},
+
 		render_into_shadow(content: TemplateResult | void) {
 			render(content, shadow)
-			on_render(container, shadow, name)
+
+			if (auto_exportparts_is_enabled)
+				auto_exportparts(container, shadow)
+
 			return container
 		},
 	}

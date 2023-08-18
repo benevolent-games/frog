@@ -7,7 +7,7 @@ export const PlainView = flipview({
 	flat: new Flat(),
 	name: "plain",
 	styles: [],
-	auto_exportparts: true,
+	default_auto_exportparts: true,
 	render: () => () => html``,
 })
 
