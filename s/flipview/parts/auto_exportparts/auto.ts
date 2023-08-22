@@ -3,10 +3,11 @@ import {parse_exportparts, parse_part, parse_prefixes, query_attributes, stitch_
 
 export function auto_exportparts(
 		container: HTMLElement,
-		root: HTMLElement | ShadowRoot,
+		root: ShadowRoot,
 	) {
 
 	const prefixes = parse_prefixes(container.getAttribute("part"))
+	const gprefixes = parse_prefixes(container.getAttribute("data-gpart"))
 
 	const attrs = query_attributes(root, {
 		part: "part",
@@ -33,10 +34,14 @@ export function auto_exportparts(
 				.join(", "),
 		)
 
-	if (gparts.size)
+	if (gparts.size || container.hasAttribute("data-gpart"))
 		container.setAttribute(
 			"gexportparts",
-			[...gparts].join(" "),
+			[
+				...gparts,
+				...[...gprefixes]
+					.flatMap(prefix => [...parts].map(part => `${prefix}-${part}`)),
+			].join(" ")
 		)
 }
 

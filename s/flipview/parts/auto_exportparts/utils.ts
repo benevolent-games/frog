@@ -1,13 +1,12 @@
 
-export function parse_prefixes(part: string | null) {
+export function parse_prefixes(...partstrings: (string | null)[]) {
 	const prefixes = new Set<string>()
 
-	const view_parts = (part ?? "")
-		.split(/\s+/)
-		.map(p => p.trim())
-		.filter(p => !!p)
+	const parts = partstrings
+		.map(part => part ?? "")
+		.flatMap(parse_part)
 
-	for (const part of view_parts)
+	for (const part of parts)
 		prefixes.add(part)
 
 	return prefixes
