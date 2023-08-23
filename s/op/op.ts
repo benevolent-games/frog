@@ -56,6 +56,7 @@ export namespace Op {
 		try {
 			const payload = await fun()
 			set_op(ready(payload))
+			return payload as X
 		}
 		catch (err) {
 			const reason = (err instanceof JsError)
