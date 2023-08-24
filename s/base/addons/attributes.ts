@@ -4,6 +4,9 @@ import {BaseElement} from "../../base/element.js"
 type AnyAttrs = {[key: string]: string}
 type AttrsFor<A extends AnyAttrs, V> = {[P in keyof A]: V}
 
+/**
+ * @deprecated please use `attrs` instead
+ */
 export function attributes<A extends AnyAttrs>(element: BaseElement) {
 	const observer = new MutationObserver(() => element.requestUpdate())
 	observer.observe(element, {attributes: true})
