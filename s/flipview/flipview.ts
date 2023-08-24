@@ -18,10 +18,10 @@ export function flipview<P extends any[]>({
 
 	return custom_directive_with_detail_input(class extends AsyncDirective {
 		#recent_input?: FlipviewData<P>
-		#hooks = hooks(flat)
-		#renderize = this.#hooks.wrap(render)
 		#stop: (() => void) | undefined
 		#root = make_view_root(name, styles)
+		#hooks = hooks(flat, this.#root.container)
+		#renderize = this.#hooks.wrap(render)
 
 		update(_: Part, props: [FlipviewData<P>]) {
 			return this.#root.render_into_shadow(this.render(...props))

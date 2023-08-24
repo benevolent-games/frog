@@ -15,7 +15,7 @@ export const DemoView = flipview({
 
 		use.setup(() => {
 			const interval = setInterval(increment, 1000)
-			return () => clearInterval(interval)
+			return {setdown: () => clearInterval(interval)}
 		})
 
 		return html`

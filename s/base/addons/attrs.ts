@@ -1,12 +1,19 @@
 
 import {BaseElement} from "../element.js"
 
-export class Attrs<A extends {[key: string]: string}> {
-	#element: BaseElement
+type Strings = {[key: string]: string}
 
-	constructor(element: BaseElement) {
+export class Attrs<A extends Strings> {
+
+	static base<A extends Strings>(element: BaseElement) {
+		return new this<A>(element, () => element.requestUpdate())
+	}
+
+	#element: HTMLElement
+
+	constructor(element: HTMLElement, on_change: () => void) {
 		this.#element = element
-		const observer = new MutationObserver(() => element.requestUpdate())
+		const observer = new MutationObserver(on_change)
 		observer.observe(element, {attributes: true})
 	}
 

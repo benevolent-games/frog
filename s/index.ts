@@ -2,6 +2,7 @@
 export * from "./base/element.js"
 
 export * from "./base/addons/attributes.js"
+export * from "./base/addons/attrs.js"
 
 export * from "./base/helpers/flatstate_reactivity.js"
 export * from "./base/helpers/provide_context.js"
