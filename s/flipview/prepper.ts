@@ -11,16 +11,16 @@ export type PrepperRender<C extends PrepperContext, P extends any[]> = (
 	(context: C) => (use: Use) => (...props: P) => (TemplateResult | void)
 )
 
-export type PrepperOptions = {
-	default_auto_exportparts?: boolean
+type Options = {
+	default_auto_exportparts: boolean
 }
 
-export function flipview_prepper<C extends PrepperContext>() {
-	return (name: string, {default_auto_exportparts = true}: PrepperOptions = {}) => ({
+export function flipview_prepper<C extends PrepperContext>(o: Options) {
+	return (name: string, {default_auto_exportparts = o.default_auto_exportparts}: Partial<Options> = {}) => ({
 		render: <P extends any[]>(render: PrepperRender<C, P>) => ({
 			styles: (...styles: CSSResultGroup[]) => (context: C) => flipview<P>({
-				flat: context.flat,
 				name,
+				flat: context.flat,
 				default_auto_exportparts,
 				render: (use: Use) => (...props: P) => render(context)(use)(...props),
 				styles: context.theme
