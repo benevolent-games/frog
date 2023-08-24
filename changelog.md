@@ -1,4 +1,10 @@
 
+- (!) flipview renames
+  - `BaseContext` -> `PrepperContext`
+  - `Render` -> `PrepperRender`
+  - `FlippyOptions` -> `PrepperOptions`
+  - `flipview_context_prepper` -> `flipview_prepper`
+
 ## v0.5.0 - 2023-08-17
 
 - (!) introducing `flipview`

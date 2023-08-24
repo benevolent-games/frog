@@ -16,13 +16,17 @@ export type FlipviewData<P extends any[]> = FlipviewSettings & {
 	content?: TemplateResult | void,
 }
 
-export type Flipview<P extends any[]> = (data: FlipviewData<P>) => (TemplateResult | void)
+export type FlipviewRender<P extends any[]> = (
+	(use: Use) => (...props: P) => (TemplateResult | void)
+)
 
 export type FlipviewOptions<P extends any[]> = {
 	flat: Flat
 	name: string
 	styles: CSSResultGroup
 	default_auto_exportparts: boolean
-	render: (use: Use) => (...props: P) => TemplateResult | void
+	render: FlipviewRender<P>
 }
+
+export type Flipview<P extends any[]> = (data: FlipviewData<P>) => (TemplateResult | void)
 
