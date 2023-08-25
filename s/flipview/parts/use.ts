@@ -26,10 +26,10 @@ export class Use {
 		this.element = element
 	}
 
-	setup<R>(up: () => {result?: R, setdown?: () => void}): R {
+	setup<R>(up: () => {result: R, setdown: () => void}): R {
 		const count = this.#counter.count++
 		if (!this.#setdowns.has(count)) {
-			const {result, setdown = () => {}} = up()
+			const {result, setdown} = up()
 			this.#setdowns.set(count, setdown)
 			return result as R
 		}
