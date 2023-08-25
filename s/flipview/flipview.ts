@@ -5,7 +5,7 @@ import {AsyncDirective} from "lit/async-directive.js"
 import {hooks} from "./parts/hooks.js"
 import {make_view_root} from "./parts/root.js"
 import {apply_details} from "./parts/apply_details.js"
-import {Flipview, FlipviewData, FlipviewOptions} from "./parts/types.js"
+import {Flipview, FlipData, FlipOptions} from "./parts/types.js"
 import {custom_directive_with_detail_input} from "./parts/custom_directive_with_detail_input.js"
 
 export function flipview<P extends any[]>({
@@ -14,10 +14,10 @@ export function flipview<P extends any[]>({
 		styles,
 		default_auto_exportparts,
 		render,
-	}: FlipviewOptions<P>) {
+	}: FlipOptions<P>) {
 
 	return custom_directive_with_detail_input(class extends AsyncDirective {
-		#recent_input?: FlipviewData<P>
+		#recent_input?: FlipData<P>
 		#rerender = () => {
 			if (this.#recent_input)
 				this.setValue(
@@ -31,11 +31,11 @@ export function flipview<P extends any[]>({
 		#hooks = hooks(flat, this.#root.container, this.#rerender)
 		#renderize = this.#hooks.wrap(render)
 
-		update(_: Part, props: [FlipviewData<P>]) {
+		update(_: Part, props: [FlipData<P>]) {
 			return this.#root.render_into_shadow(this.render(...props))
 		}
 
-		render(input: FlipviewData<P>) {
+		render(input: FlipData<P>) {
 			apply_details(this.#root.container, input, this.#recent_input)
 			this.#recent_input = input
 			this.#root.auto_exportparts = (

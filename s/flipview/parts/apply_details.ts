@@ -1,8 +1,8 @@
 
 import {render} from "lit"
-import {FlipviewData} from "./types.js"
+import {FlipData} from "./types.js"
 
-export function apply_details(element: HTMLElement, fresh: FlipviewData<any>, old?: FlipviewData<any>) {
+export function apply_details(element: HTMLElement, fresh: FlipData<any>, old?: FlipData<any>) {
 
 	function actuate<V>(freshvalue: V, oldvalue: V, name: string, value: () => string) {
 		if (freshvalue !== oldvalue) {

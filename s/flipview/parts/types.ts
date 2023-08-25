@@ -4,36 +4,36 @@ import {CSSResultGroup, TemplateResult} from "lit"
 import {FlipUse} from "./use.js"
 import {Flat} from "../../flatstate/flat.js"
 
-export type FlipviewSettings = {
+export type FlipSettings = {
 	class?: string
 	part?: string
 	gpart?: string
 	auto_exportparts?: boolean
 }
 
-export type FlipviewData<P extends any[]> = FlipviewSettings & {
+export type FlipData<P extends any[]> = FlipSettings & {
 	props: P,
 	content?: TemplateResult | void,
 }
 
-export type FlipviewRender<P extends any[]> = (
+export type FlipRender<P extends any[]> = (
 	(use: FlipUse) => (...props: P) => (TemplateResult | void)
 )
 
-export type FlipviewOptions<P extends any[]> = {
+export type FlipOptions<P extends any[]> = {
 	flat: Flat
 	name: string
 	styles: CSSResultGroup
 	default_auto_exportparts: boolean
-	render: FlipviewRender<P>
+	render: FlipRender<P>
 }
 
-export type Flipview<P extends any[]> = (data: FlipviewData<P>) => (TemplateResult | void)
+export type Flipview<P extends any[]> = (data: FlipData<P>) => (TemplateResult | void)
 
-export type FlipUseSetupDetails<R> = {
+export type FlipSetupDetails<R> = {
 	result: R
 	setdown: () => void
 }
 
-export type FlipUseSetup<R> = () => FlipUseSetupDetails<R>
+export type FlipSetup<R> = () => FlipSetupDetails<R>
 

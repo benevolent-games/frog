@@ -4,7 +4,7 @@ import {CSSResultGroup, TemplateResult} from "lit"
 import {FlipUse} from "./parts/use.js"
 import {flipview} from "./flipview.js"
 import {Flat} from "../flatstate/flat.js"
-import { Flipview, FlipviewRender } from "./parts/types.js"
+import { Flipview, FlipRender } from "./parts/types.js"
 import { requirement, Requirement } from "../tools/requirement.js"
 
 export type PrepperContext = {flat: Flat, theme?: CSSResultGroup}
@@ -59,7 +59,7 @@ export function flipview_prepper3<C extends PrepperContext>(
 
 	return <P extends any[]>(name: string, fun: Requirement<C, {
 			styles: CSSResultGroup
-			render: FlipviewRender<P>
+			render: FlipRender<P>
 			default_auto_exportparts?: boolean
 		}>) => requirement<C>()<Flipview<P>>(context => {
 
