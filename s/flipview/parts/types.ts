@@ -30,10 +30,10 @@ export type FlipviewOptions<P extends any[]> = {
 
 export type Flipview<P extends any[]> = (data: FlipviewData<P>) => (TemplateResult | void)
 
-export type FlipviewSetupDetails<R> = {
+export type FlipUseSetupDetails<R> = {
 	result: R
 	setdown: () => void
 }
 
-export type FlipviewSetup<R> = () => FlipviewSetupDetails<R>
+export type FlipUseSetup<R> = () => FlipUseSetupDetails<R>
 
