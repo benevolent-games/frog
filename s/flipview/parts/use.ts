@@ -1,8 +1,8 @@
 
 import {Flat} from "../../flatstate/flat.js"
-import { FlipviewSetupDetails } from "./types.js"
+import {FlipviewSetupDetails} from "./types.js"
 
-export class Use {
+export class FlipUse {
 	#counter: {count: number}
 	#flat: Flat
 	#states: Map<number, {}>

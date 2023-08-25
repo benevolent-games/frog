@@ -1,7 +1,7 @@
 
 import {CSSResultGroup, TemplateResult} from "lit"
 
-import {Use} from "./use.js"
+import {FlipUse} from "./use.js"
 import {Flat} from "../../flatstate/flat.js"
 
 export type FlipviewSettings = {
@@ -17,7 +17,7 @@ export type FlipviewData<P extends any[]> = FlipviewSettings & {
 }
 
 export type FlipviewRender<P extends any[]> = (
-	(use: Use) => (...props: P) => (TemplateResult | void)
+	(use: FlipUse) => (...props: P) => (TemplateResult | void)
 )
 
 export type FlipviewOptions<P extends any[]> = {
