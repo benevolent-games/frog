@@ -35,3 +35,5 @@ export type FlipviewSetupDetails<R> = {
 	setdown: () => void
 }
 
+export type FlipviewSetup<R> = () => FlipviewSetupDetails<R>
+
