@@ -11,7 +11,7 @@ export class Attrs<A extends Strings> {
 
 	#element: HTMLElement
 
-	constructor(element: HTMLElement, on_change: () => void) {
+	constructor(element: HTMLElement, on_change: () => void = () => {}) {
 		this.#element = element
 		const observer = new MutationObserver(on_change)
 		observer.observe(element, {attributes: true})
