@@ -15,6 +15,11 @@
     - `FlippyOptions` -> `PrepperOptions`
     - `flipview_context_prepper` -> `flipview_prepper`
 - (!) base addon `attributes` deprecated in favor of new `Attrs`
+- (!) rework requirement types and names
+- (!) rename almost every flipview type
+  - `FlipviewOptions` becomes `FlipOptions`
+  - a bunch more renames along those same lines
+- add LightElement (lightdom)
 
 ## v0.5.0 - 2023-08-17
 
