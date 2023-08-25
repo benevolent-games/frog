@@ -4,8 +4,8 @@ import {CSSResultGroup, TemplateResult} from "lit"
 import {FlipUse} from "./parts/use.js"
 import {flipview} from "./flipview.js"
 import {Flat} from "../flatstate/flat.js"
-import { Flipview, FlipRender } from "./parts/types.js"
-import { requirement, Requirement } from "../tools/requirement.js"
+import {Flipview, FlipRender} from "./parts/types.js"
+import {requirement, Requirement} from "../tools/requirement.js"
 
 export type PrepperContext = {flat: Flat, theme?: CSSResultGroup}
 
