@@ -37,6 +37,7 @@ export * from "./op/op.js"
 export * from "./op/prep_render_op.js"
 
 export * from "./quick/element.js"
+export * from "./quick/light.js"
 
 export * from "./tools/clone/clone.js"
 export * from "./tools/debounce.js"
