@@ -28,16 +28,16 @@
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.5.0",
-		"@rollup/plugin-node-resolve": "^15.2.0",
+		"@rollup/plugin-node-resolve": "^15.2.1",
 		"chokidar": "^3.5.3",
 		"chokidar-cli": "^3.0.0",
 		"cynic": "^0.2.1",
 		"http-server": "^14.1.1",
 		"importly": "^0.2.1",
 		"npm-run-all": "^4.1.5",
-		"rollup": "^3.28.0",
+		"rollup": "^3.28.1",
 		"terser": "^5.19.2",
-		"typescript": "^5.1.6"
+		"typescript": "^5.2.2"
 	},
 	"keywords": [
 		"frog",
