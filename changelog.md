@@ -1,9 +1,20 @@
 
-- (!) flipview renames
-  - `BaseContext` -> `PrepperContext`
-  - `Render` -> `PrepperRender`
-  - `FlippyOptions` -> `PrepperOptions`
-  - `flipview_context_prepper` -> `flipview_prepper`
+- (!) flipview
+  - views now have simpler syntax
+    ```ts
+    DemoView(settings)(prop1, prop2)(content)
+    DemoView({settings, props: [prop1, prop2], content})
+    ```
+  - reworked use.setup hook
+    - now use.setup must return `{result, setdown}`
+    - use.setup actually returns the result
+    - thus allowing you to setup a reusable object
+  - renames
+    - `BaseContext` -> `PrepperContext`
+    - `Render` -> `PrepperRender`
+    - `FlippyOptions` -> `PrepperOptions`
+    - `flipview_context_prepper` -> `flipview_prepper`
+- (!) base addon `attributes` deprecated in favor of new `Attrs`
 
 ## v0.5.0 - 2023-08-17
 
