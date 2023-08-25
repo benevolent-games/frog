@@ -1,12 +1,12 @@
 
 import {obtool} from "./obtool.js"
 
-export type Requirement<X, Y> = (x: X) => Y
-export type GroupRequirement<X, Y> = {[key: string]: Requirement<X, Y>}
+export type Requirement<R, T> = (r: R) => T
+export type RequirementGroup<R, T> = {[key: string]: Requirement<R, T>}
 
-export type ProvideRequirement<R extends Requirement<any, any>> = ReturnType<R>
-export type GroupProvideRequirement<G extends GroupRequirement<any, any>> = {
-	[P in keyof G]: ProvideRequirement<G[P]>
+export type RequirementProvided<F extends Requirement<any, any>> = ReturnType<F>
+export type RequirementGroupProvided<G extends RequirementGroup<any, any>> = {
+	[P in keyof G]: RequirementProvided<G[P]>
 }
 
 /**
@@ -16,8 +16,8 @@ export type GroupProvideRequirement<G extends GroupRequirement<any, any>> = {
  *  - `const MyView = contextual(context => flipview())`
  *  - in that example, the requirement enforces the types for context and the view
  */
-export function requirement<X>() {
-	return function<Y>(fun: Requirement<X, Y>) {
+export function requirement<R>() {
+	return function<T>(fun: Requirement<R, T>) {
 		return fun
 	}
 }
@@ -25,9 +25,9 @@ export function requirement<X>() {
 /**
  * provide a requirement to a group of things.
  */
-requirement.provide = <X>(x: X) => (
-	<G extends GroupRequirement<X, any>>(group: G) => (
-		obtool(group).map(fun => fun(x)) as GroupProvideRequirement<G>
+requirement.provide = <R>(r: R) => (
+	<G extends RequirementGroup<R, any>>(group: G) => (
+		obtool(group).map(fun => fun(r)) as RequirementGroupProvided<G>
 	)
 )
 
