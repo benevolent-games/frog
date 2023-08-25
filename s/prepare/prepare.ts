@@ -1,5 +1,5 @@
 
-import {CSSResultGroup, TemplateResult} from "lit"
+import {CSSResultGroup} from "lit"
 
 import {Pipe} from "../tools/pipe.js"
 import {Flat} from "../flatstate/flat.js"
@@ -9,10 +9,14 @@ import {apply_theme} from "../base/helpers/apply_theme.js"
 import {FlipRender, Flipview} from "../flipview/parts/types.js"
 import {flatstate_reactivity} from "../base/helpers/flatstate_reactivity.js"
 import {requirement, Requirement, RequirementGroup, RequirementGroupProvided} from "../tools/requirement.js"
-import { PrepperRender } from "../flipview/prepper.js"
-import { FlipUse } from "../flipview/parts/use.js"
 
 export type BaseContext = {flat: Flat, theme: CSSResultGroup}
+
+type ViewOptions<P extends any[]> = {
+	styles: CSSResultGroup
+	render: FlipRender<P>
+	default_auto_exportparts?: boolean
+}
 
 export const prepare = <C extends BaseContext>() => (
 	<E extends RequirementGroup<C, BaseElementClass>>(options: {
@@ -31,11 +35,10 @@ export const prepare = <C extends BaseContext>() => (
 			.done() as RequirementGroupProvided<E>
 		),
 
-		view: <P extends any[]>(name: string, fun: Requirement<C, {
-				styles: CSSResultGroup
-				render: FlipRender<P>
-				default_auto_exportparts?: boolean
-			}>) => requirement<C>()<Flipview<P>>(context => {
+		view: <P extends any[]>(
+				name: string,
+				fun: Requirement<C, ViewOptions<P>>,
+			) => requirement<C>()<Flipview<P>>(context => {
 
 			const {
 				styles,
@@ -55,25 +58,11 @@ export const prepare = <C extends BaseContext>() => (
 			})
 		}),
 
-		view2: (
-				name: string,
-				{default_auto_exportparts = options.views.default_auto_exportparts}: {
-					default_auto_exportparts?: boolean
-				} = {},
-			) => ({
-			render: <P extends any[]>(render: PrepperRender<C, P>) => ({
-				styles: (...styles: CSSResultGroup[]) => (context: C) => flipview<P>({
-					name,
-					flat: context.flat,
-					default_auto_exportparts,
-					render: (use: FlipUse) => (...props: P) => render(context)(use)(...props),
-					styles: [
-						context.theme,
-						...(Array.isArray(styles) ? styles : [styles]),
-					],
-				}),
-			}),
-		}),
+		subviews: <V extends RequirementGroup<C, Flipview<any>>>(views: V) => (
+			<P extends any[]>(
+				fun: (v: V) => (context: C) => ViewOptions<P>
+			) => fun(views)
+		),
 
 	})
 )
