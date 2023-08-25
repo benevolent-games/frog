@@ -2,7 +2,7 @@
 import {Use} from "./use.js"
 import {Flat} from "../../flatstate/flat.js"
 
-export function hooks(flat: Flat, element: HTMLElement) {
+export function hooks(flat: Flat, element: HTMLElement, rerender: () => void) {
 	const counter = {count: 0}
 	const states = new Map<number, {}>()
 	const setdata = new Map<number, any>()
@@ -15,6 +15,7 @@ export function hooks(flat: Flat, element: HTMLElement) {
 		setdata,
 		setdowns,
 		element,
+		rerender,
 	)
 
 	return {

@@ -7,7 +7,9 @@ export class Use {
 	#states: Map<number, {}>
 	#setdata: Map<number, any>
 	#setdowns: Map<number, () => void>
+
 	readonly element: HTMLElement
+	readonly rerender: () => void
 
 	constructor(
 			flat: Flat,
@@ -16,6 +18,7 @@ export class Use {
 			setdata: Map<number, any>,
 			setdowns: Map<number, () => void>,
 			element: HTMLElement,
+			rerender: () => void,
 		) {
 
 		this.#counter = counter
@@ -24,6 +27,7 @@ export class Use {
 		this.#setdata = setdata
 		this.#setdowns = setdowns
 		this.element = element
+		this.rerender = rerender
 	}
 
 	setup<R>(up: () => {result: R, setdown: () => void}): R {

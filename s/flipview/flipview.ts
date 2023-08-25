@@ -18,9 +18,17 @@ export function flipview<P extends any[]>({
 
 	return custom_directive_with_detail_input(class extends AsyncDirective {
 		#recent_input?: FlipviewData<P>
+		#rerender = () => {
+			if (this.#recent_input)
+				this.setValue(
+					this.#root.render_into_shadow(
+						this.render(this.#recent_input!)
+					)
+				)
+		}
 		#stop: (() => void) | undefined
 		#root = make_view_root(name, styles)
-		#hooks = hooks(flat, this.#root.container)
+		#hooks = hooks(flat, this.#root.container, this.#rerender)
 		#renderize = this.#hooks.wrap(render)
 
 		update(_: Part, props: [FlipviewData<P>]) {
@@ -47,11 +55,7 @@ export function flipview<P extends any[]>({
 					result = this.#renderize(this.#hooks.use)(...props)
 				},
 				responder: () => {
-					this.setValue(
-						this.#root.render_into_shadow(
-							this.render(this.#recent_input!)
-						)
-					)
+					this.#rerender()
 				},
 			})
 
