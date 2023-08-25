@@ -1,5 +1,6 @@
 
 import {Flat} from "../../flatstate/flat.js"
+import { FlipviewSetupDetails } from "./types.js"
 
 export class Use {
 	#counter: {count: number}
@@ -30,7 +31,7 @@ export class Use {
 		this.rerender = rerender
 	}
 
-	setup<R>(up: () => {result: R, setdown: () => void}): R {
+	setup<R>(up: () => FlipviewSetupDetails<R>): R {
 		const count = this.#counter.count++
 		if (!this.#setdowns.has(count)) {
 			const {result, setdown} = up()
