@@ -4,6 +4,9 @@ import {BaseElementClass} from "../element.js"
 
 type ElementFuncs<C> = {[key: string]: (context: C) => BaseElementClass}
 
+/**
+ * @deprecated please use `requirement` and `requirement.provide` instead
+ */
 export function provide_context<C>(context: C) {
 	return <E extends ElementFuncs<C>>(elements: E) => obtool(elements).map(
 		fun => fun(context)
