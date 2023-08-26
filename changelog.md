@@ -19,7 +19,8 @@
 - (!) rename almost every flipview type
   - `FlipviewOptions` becomes `FlipOptions`
   - a bunch more renames along those same lines
-- add LightElement (lightdom)
+- add `LightElement` (lightdom)
+- add standardized frontend `prepare` system
 
 ## v0.5.0 - 2023-08-17
 
