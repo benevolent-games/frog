@@ -12,41 +12,54 @@ import {requirement, RequirementGroup, RequirementGroupProvided} from "../tools/
 
 export type BaseContext = {flat: Flat, theme: CSSResultGroup}
 
-export const prepare = <C extends BaseContext>() => (
-	<E extends RequirementGroup<C, BaseElementClass>>(options: {
-			elements: E
-			views: {
-				default_auto_exportparts: boolean
-			}
-		}) => ({
+export const prepare = <C extends BaseContext>(options: {
+		default_auto_exportparts: boolean
+	}) => {
 
-		component: () => requirement<C>()<BaseElementClass>,
+	function component<E extends BaseElementClass>(fun: (context: C) => E) {
+		return (context: C) => fun(context)
+	}
 
-		elements: (context: C) => (Pipe.with(options.elements)
-			.to(requirement.provide(context))
-			.to(flatstate_reactivity(context.flat))
-			.to(apply_theme(context.theme))
-			.done() as RequirementGroupProvided<E>
+	component.views = <V extends RequirementGroup<C, Flipview<any>>>(views: V) => ({
+		element: <E extends BaseElementClass>(
+				fun: (context: C) => (views: RequirementGroupProvided<V>) => E,
+			) => (
+			(context: C) => fun(context)(requirement.provide(context)(views))
+		),
+	})
+
+	return ({
+		component,
+
+		components: <E extends RequirementGroup<C, BaseElementClass>>(e: E) => (
+			(context: C) => (Pipe.with(e)
+				.to(requirement.provide(context))
+				.to(flatstate_reactivity(context.flat))
+				.to(apply_theme(context.theme))
+				.done() as RequirementGroupProvided<E>
+			)
 		),
 
 		view: <V extends RequirementGroup<C, Flipview<any>>>(o: {
+				views: V
 				name: string
 				styles: CSSResultGroup
-				views: V
 				default_auto_exportparts?: boolean
 			}) => ({
-			render: <P extends any[]>(rend: (context: C, views: RequirementGroupProvided<V>) => FlipRender<P>) => (
+			render: <P extends any[]>(
+					rend: (context: C) => (views: RequirementGroupProvided<V>) => FlipRender<P>
+				) => (
 				(context: C) => {
 					const views = requirement.provide(context)(o.views)
 					const {
 						styles,
-						default_auto_exportparts = options.views.default_auto_exportparts,
+						default_auto_exportparts = options.default_auto_exportparts,
 					} = o
 					return flipview<P>({
 						name: o.name,
 						flat: context.flat,
 						default_auto_exportparts,
-						render: rend(context, views),
+						render: rend(context)(views),
 						styles: [
 							context.theme,
 							...(Array.isArray(styles) ? styles : [styles]),
@@ -56,7 +69,10 @@ export const prepare = <C extends BaseContext>() => (
 			)
 		}),
 
-		views: (context: C) => requirement.provide(context)<RequirementGroup<C, Flipview<any>>>,
+		views: <V extends RequirementGroup<C, Flipview<any>>>(
+			context: C,
+			viewgroup: V,
+		) => requirement.provide(context)(viewgroup),
 	})
-)
+}
 
