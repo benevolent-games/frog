@@ -43,7 +43,8 @@ export class QuickElement extends HTMLElement implements BaseElement {
 	#render_debounced = debounce(0, () => {
 		const root = this.#root
 		const template = this.render()
-		render(template, root, {host: this})
+		if (template)
+			render(template, root, {host: this})
 	})
 
 	async update() {
