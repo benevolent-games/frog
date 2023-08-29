@@ -1,6 +1,7 @@
 
 import {render} from "lit"
 import {FlipData} from "./types.js"
+import {apply_attributes} from "./apply_attributes.js"
 
 export function apply_details(element: HTMLElement, fresh: FlipData<any>, old?: FlipData<any>) {
 
@@ -12,6 +13,9 @@ export function apply_details(element: HTMLElement, fresh: FlipData<any>, old?: 
 				element.setAttribute(name, value())
 		}
 	}
+
+	if (fresh.attributes)
+		apply_attributes(element, fresh.attributes)
 
 	actuate(
 		fresh.class,
