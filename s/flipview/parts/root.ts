@@ -1,5 +1,4 @@
 
-import {dashify} from "@chasemoskal/magical"
 import {CSSResultGroup, TemplateResult, render} from "lit"
 
 import {FlipView} from "./flip-view-element.js"
@@ -11,7 +10,7 @@ export function make_view_root(
 		css: CSSResultGroup | undefined,
 	) {
 
-	const container = document.createElement(dashify(FlipView.name))
+	const container = document.createElement(FlipView.tag)
 	container.setAttribute("view", name)
 
 	const shadow = container.attachShadow({mode: "open"})
