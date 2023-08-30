@@ -35,6 +35,7 @@ export class FlipUse {
 		const count = this.#counter.count++
 		if (!this.#setdowns.has(count)) {
 			const {result, setdown} = up()
+			this.#setdata.set(count, result)
 			this.#setdowns.set(count, setdown)
 			return result as R
 		}
